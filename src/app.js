@@ -1,13 +1,14 @@
 const App = require('./frameWork.js');
 const app = new App();
 const fs = require('fs');
+const userInfo = require('../public/data/userInfo.json');
 
 const getRequest = function(url) {
   if (url == '/') return './public/html/index.html';
   return './public/html' + url;
 };
 
-const sendResponse = function(res, content, status) {
+const sendResponse = function(res, content, status = 200) {
   res.statusCode = status;
   res.write(content);
   res.end();
@@ -18,7 +19,6 @@ const readBody = (req, res, next) => {
   req.on('data', chunk => (content += chunk));
   req.on('end', () => {
     req.body = content;
-    console.log(req.body);
     next();
   });
 };
@@ -39,14 +39,34 @@ const logRequest = function(req, res, next) {
   next();
 };
 
-const signup = function(req, res) {
-  console.log('hi');
+const parseUserInfo = function(details) {
+  let userId = details.split(/&|=/)[1];
+  let password = details.split(/&|=/)[3];
+  return { userId, password };
+};
+
+const redirectToLogin = function(res) {
+  res.writeHead(302, {
+    Location: '/index.html'
+  });
   res.end();
 };
 
+const addUserInfo = function(res, userInfo) {
+  fs.writeFile('./public/data/userInfo.json', JSON.stringify(userInfo), () => {
+    redirectToLogin(res);
+  });
+};
+
+const handleSignup = function(req, res) {
+  let userDetails = parseUserInfo(req.body);
+  userInfo.push(userDetails);
+  addUserInfo(res, userInfo);
+};
+
+app.use(logRequest);
 app.use(readBody);
-//app.use(logRequest);
-app.post('/signup', signup);
+app.post('/signup', handleSignup);
 app.use(handleRequest);
 
 module.exports = app.handler.bind(app);

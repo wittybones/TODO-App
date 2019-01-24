@@ -75,13 +75,28 @@ const handleUserLogin = function(req, res) {
   let isValidUser = validateUser.bind(null, currentUserInfo);
   let validUser = userInfo.filter(isValidUser);
   if (validUser.length > 0) {
+    if (!req.cookies) {
+      res.setHeader('Set-Cookie', 'username=' + currentUserInfo.userId);
+    }
     sendResponse(res, 'login successfully');
     return;
   }
   sendResponse(res, 'login failed');
 };
 
+const readCookies = function(req, res, next) {
+  let cookie = req.headers['cookie'];
+  if (cookie) {
+    let cookies = new Object();
+    let [name, value] = cookie.split('=');
+    cookies[name] = value;
+    req.cookies = cookies;
+  }
+  next();
+};
+
 app.use(logRequest);
+app.use(readCookies);
 app.use(readBody);
 app.post('/login', handleUserLogin);
 app.post('/signup', handleSignup);

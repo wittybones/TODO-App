@@ -8,12 +8,6 @@ const getRequest = function(url) {
   return './public/html' + url;
 };
 
-// const sendResponse = function(res, content, status = 200) {
-// res.statusCode = status;
-// res.write(content);
-// res.end();
-// };
-
 const readBody = (req, res, next, sendResponse) => {
   let content = '';
   req.on('data', chunk => (content += chunk));

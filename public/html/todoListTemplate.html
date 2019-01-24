@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Page Title</title>
+  </head>
+  <style>
+    body {
+      margin: auto auto;
+      font-size: 20px;
+      font-size: 30px;
+    }
+  </style>
+  <body>
+    <div>
+      <a href="/userProfileTemplate.html"><<</a> <br />
+      <label>Title:</label><input type="text" name="title" /> <br />
+      <label>List items:</label> <br />
+      <button onclick="addItem()">+</button>
+    </div>
+    <form action="/login" method="POST">
+      <div id="todolists"></div>
+      <input type="submit" value="Save" />
+    </form>
+  </body>
+  <script>
+    addItem = function() {
+      let listsDiv = document.getElementById('todolists');
+      let newList = document.createElement('INPUT');
+      newList.setAttribute('type', 'checkbox');
+      listsDiv.appendChild(newList);
+      let descriptionDiv = document.createElement('INPUT');
+      descriptionDiv.setAttribute('type', 'text');
+      descriptionDiv.className = 'listsData';
+      listsDiv.appendChild(descriptionDiv);
+    };
+  </script>
+</html>

@@ -13,6 +13,8 @@ const readBody = (req, res, next, sendResponse) => {
   req.on('data', chunk => (content += chunk));
   req.on('end', () => {
     req.body = content;
+    console.log(req.body);
+
     next();
   });
 };
@@ -72,7 +74,12 @@ const handleUserLogin = function(req, res, next, sendResponse) {
     if (!req.cookies) {
       res.setHeader('Set-Cookie', 'username=' + currentUserInfo.userId);
     }
-    sendResponse(res, 'login successfully');
+    fs.readFile('./public/html/userProfileTemplate.html', 'utf8', function(
+      err,
+      content
+    ) {
+      sendResponse(res, content);
+    });
     return;
   }
   sendResponse(res, 'login failed');
@@ -89,9 +96,19 @@ const readCookies = function(req, res, next, sendResponse) {
   next();
 };
 
+const renderTodoTemplate = function(req, res, next, sendResponse) {
+  fs.readFile('./public/html/todoListTemplate.html', 'utf8', function(
+    err,
+    content
+  ) {
+    sendResponse(res, content);
+  });
+};
+
 app.use(logRequest);
 app.use(readCookies);
 app.use(readBody);
+app.post('/public/html/todoListTemplate.html', renderTodoTemplate);
 app.post('/login', handleUserLogin);
 app.post('/signup', handleSignup);
 app.use(handleRequest);

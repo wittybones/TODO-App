@@ -8,13 +8,13 @@ const getRequest = function(url) {
   return './public/html' + url;
 };
 
-const sendResponse = function(res, content, status = 200) {
-  res.statusCode = status;
-  res.write(content);
-  res.end();
-};
+// const sendResponse = function(res, content, status = 200) {
+// res.statusCode = status;
+// res.write(content);
+// res.end();
+// };
 
-const readBody = (req, res, next) => {
+const readBody = (req, res, next, sendResponse) => {
   let content = '';
   req.on('data', chunk => (content += chunk));
   req.on('end', () => {
@@ -23,7 +23,7 @@ const readBody = (req, res, next) => {
   });
 };
 
-const handleRequest = function(req, res) {
+const handleRequest = function(req, res, next, sendResponse) {
   let request = getRequest(req.url);
   fs.readFile(request, function(err, content) {
     if (err) {
@@ -34,7 +34,7 @@ const handleRequest = function(req, res) {
   });
 };
 
-const logRequest = function(req, res, next) {
+const logRequest = function(req, res, next, sendResponse) {
   console.log(req.method, req.url);
   next();
 };
@@ -58,7 +58,7 @@ const addUserInfo = function(res, userInfo) {
   });
 };
 
-const handleSignup = function(req, res) {
+const handleSignup = function(req, res, next, sendResponse) {
   let userDetails = parseUserInfo(req.body);
   userInfo.push(userDetails);
   addUserInfo(res, userInfo);
@@ -70,7 +70,7 @@ const validateUser = function(currentUserInfo, userInfo) {
   return isCorrectName && isCorrectPassword;
 };
 
-const handleUserLogin = function(req, res) {
+const handleUserLogin = function(req, res, next, sendResponse) {
   let currentUserInfo = parseUserInfo(req.body);
   let isValidUser = validateUser.bind(null, currentUserInfo);
   let validUser = userInfo.filter(isValidUser);
@@ -84,7 +84,7 @@ const handleUserLogin = function(req, res) {
   sendResponse(res, 'login failed');
 };
 
-const readCookies = function(req, res, next) {
+const readCookies = function(req, res, next, sendResponse) {
   let cookie = req.headers['cookie'];
   if (cookie) {
     let cookies = new Object();
@@ -102,4 +102,4 @@ app.post('/login', handleUserLogin);
 app.post('/signup', handleSignup);
 app.use(handleRequest);
 
-module.exports = app.handler.bind(app);
+module.exports = { app: app.handler.bind(app), handleRequest };

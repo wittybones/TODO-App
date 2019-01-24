@@ -1,0 +1,30 @@
+{
+  "name": "todoapp",
+  "version": "0.0.1",
+  "description": "todo app to organize your work",
+  "main": "server.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maheshsovani/TODO-App.git"
+  },
+  "keywords": [
+    "todo"
+  ],
+  "author": "maheshsovani",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/maheshsovani/TODO-App/issues"
+  },
+  "homepage": "https://github.com/maheshsovani/TODO-App#readme",
+  "dependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0"
+  }
+}

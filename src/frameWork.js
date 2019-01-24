@@ -8,6 +8,12 @@ const isMatching = function(req, route) {
   return false;
 };
 
+const sendResponse = function(res, content, status = 200) {
+  res.statusCode = status;
+  res.write(content);
+  res.end();
+};
+
 class App {
   constructor() {
     this.routes = [];
@@ -23,7 +29,7 @@ class App {
       }
       let currentRoute = matchedRoutes[0];
       matchedRoutes.shift();
-      currentRoute.handler(req, res, next);
+      currentRoute.handler(req, res, next, sendResponse);
     };
     next();
   }

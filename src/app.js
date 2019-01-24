@@ -64,8 +64,26 @@ const handleSignup = function(req, res) {
   addUserInfo(res, userInfo);
 };
 
+const validateUser = function(currentUserInfo, userInfo) {
+  isCorrectName = currentUserInfo.userId == userInfo.userId;
+  isCorrectPassword = currentUserInfo.password == userInfo.password;
+  return isCorrectName && isCorrectPassword;
+};
+
+const handleUserLogin = function(req, res) {
+  let currentUserInfo = parseUserInfo(req.body);
+  let isValidUser = validateUser.bind(null, currentUserInfo);
+  let validUser = userInfo.filter(isValidUser);
+  if (validUser.length > 0) {
+    sendResponse(res, 'login successfully');
+    return;
+  }
+  sendResponse(res, 'login failed');
+};
+
 app.use(logRequest);
 app.use(readBody);
+app.post('/login', handleUserLogin);
 app.post('/signup', handleSignup);
 app.use(handleRequest);
 

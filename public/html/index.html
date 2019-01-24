@@ -15,12 +15,12 @@
   <body>
     <h1>MY TODO</h1>
     <main>
-      <form method="POST" style="padding:20px">
-        <label>UserID : </label> <input type="text" required /><br />
-        <label>Password : </label> <input type="password" required /><br />
-        <button style="height:30px;width:50px;font-size: 15px;margin-top: 10px">
-          Login
-        </button>
+      <form method="POST" style="padding:20px" action="/login">
+        <label>UserID : </label>
+        <input type="text" name="userId" required /><br />
+        <label>Password : </label>
+        <input type="password" name="password" required /><br />
+        <input type="submit" value="Login" />
       </form>
       <div>
         ----------OR---------- <br />

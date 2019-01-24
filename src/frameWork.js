@@ -47,4 +47,4 @@ class App {
   }
 }
 
-module.exports = App;
+module.exports = { App, sendResponse, isMatching };

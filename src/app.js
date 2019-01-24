@@ -1,4 +1,4 @@
-const App = require('./frameWork.js');
+const { App } = require('./frameWork.js');
 const app = new App();
 const fs = require('fs');
 const userInfo = require('../public/data/userInfo.json');
@@ -113,4 +113,4 @@ app.post('/login', handleUserLogin);
 app.post('/signup', handleSignup);
 app.use(handleRequest);
 
-module.exports = { app: app.handler.bind(app), handleRequest };
+module.exports = { app: app.handler.bind(app), handleRequest, parseUserInfo };

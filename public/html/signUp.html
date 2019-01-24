@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Sign Up</title>
+    <style>
+      main {
+        text-align: center;
+        font-size: 20px;
+      }
+      h1 {
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Sign Up</h1>
+    <main>
+      <form action="/signup" method="POST">
+        <label>User Id:</label> <input type="text" name="userId" required />
+        <br />
+        <label>Password:</label>
+        <input type="password" name="password" required /> <br />
+        <label>Confirm Password:</label>
+        <input type="password" name="confirm" required /> <br />
+        <input type="submit" value="Sign Up" />
+      </form>
+    </main>
+  </body>
+</html>

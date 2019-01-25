@@ -152,4 +152,13 @@ app.post('/login', handleUserLogin);
 app.post('/signup', handleSignup);
 app.use(handleRequest);
 
-module.exports = { app: app.handler.bind(app), handleRequest, parseUserInfo };
+module.exports = {
+  app: app.handler.bind(app),
+  handleRequest,
+  parseUserInfo,
+  readBody,
+  checkUserCredentials,
+  handleCookies,
+  readCookies,
+  redirectToLogin
+};

@@ -5,9 +5,8 @@ const {
   parseUserInfo,
   readBody,
   checkUserCredentials,
-  handleCookies,
-  readCookies,
-  redirectToLogin
+  setCookies,
+  readCookies
 } = require('../src/app');
 
 describe('handleRequest', function() {
@@ -89,7 +88,7 @@ describe('checkUserCredentials', function() {
   });
 });
 
-describe('handleCookies', function() {
+describe('setCookies', function() {
   it('should set the header in request object when cookie is not present', function() {
     const send = function(res, content, statusCode) {
       expect(res.setHeader()).to.equal('username=mahesh');
@@ -105,7 +104,7 @@ describe('handleCookies', function() {
       url: '/',
       cookies: undefined
     };
-    handleCookies(req, res, currentUserInfo, send);
+    setCookies(req, res, currentUserInfo, send);
   });
 });
 describe('readCookies', function() {

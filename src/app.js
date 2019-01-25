@@ -12,6 +12,8 @@ const userProfileTemplate = fs.readFileSync(
   'utf8'
 );
 
+const loginPageTemplate = fs.readFileSync('./public/html/index.html', 'utf8');
+
 const getRequest = function(url) {
   if (url == '/') return './public/html/index.html';
   return './public/html' + url;
@@ -78,14 +80,13 @@ const checkUserCredentials = function(userInfo, currentUserInfo) {
   return password == currentUserInfo.password;
 };
 
-const handleCookies = function(req, res, currentUserInfo, sendResponse) {
+const setCookies = function(req, res, currentUserInfo) {
   if (!req.cookies) {
     res.setHeader('Set-Cookie', 'username=' + currentUserInfo.userId);
   }
-  sendResponse(res, userProfileTemplate);
 };
 
-const validateUser = function(
+const redirectValidUser = function(
   req,
   res,
   currentUserInfo,
@@ -93,8 +94,11 @@ const validateUser = function(
   sendResponse
 ) {
   if (checkUserCredentials(currentUserFileContent, currentUserInfo)) {
-    handleCookies(req, res, currentUserInfo, sendResponse);
+    setCookies(req, res, currentUserInfo);
+    redirectToDashboard(req, res, () => {}, sendResponse);
+    return;
   }
+  invalidUserError(res, sendResponse);
 };
 
 const getUserFileContent = function(
@@ -108,7 +112,7 @@ const getUserFileContent = function(
     err,
     content
   ) {
-    validateUser(req, res, currentUserInfo, content, sendResponse);
+    redirectValidUser(req, res, currentUserInfo, content, sendResponse);
   });
 };
 
@@ -126,9 +130,16 @@ const handleUserLogin = function(req, res, next, sendResponse) {
     );
     return;
   }
-  sendResponse(res, 'login failed');
+  invalidUserError(res, sendResponse);
 };
 
+const invalidUserError = function(res, sendResponse) {
+  let loginTemplateWithErr = loginPageTemplate.replace(
+    '______',
+    'login failed'
+  );
+  sendResponse(res, loginTemplateWithErr);
+};
 const readCookies = function(req, res, next, sendResponse) {
   let cookie = req.headers['cookie'];
   if (cookie) {
@@ -144,10 +155,24 @@ const renderTodoTemplate = function(req, res, next, sendResponse) {
   sendResponse(res, toDoTemplate);
 };
 
+const redirectToDashboard = function(req, res, next, sendResponse) {
+  let userId = req.cookies['username'];
+  let userProfileWithName = userProfileTemplate.replace('#userId#', userId);
+  sendResponse(res, userProfileWithName);
+};
+
+const addUserList = function(req, res, next, sendResponse) {
+  let userId = req.cookies['username'];
+  let userList = req.body;
+  res.end();
+};
+
 app.use(logRequest);
 app.use(readCookies);
 app.use(readBody);
-app.post('/public/html/todoListTemplate.html', renderTodoTemplate);
+app.post('/todolist', renderTodoTemplate);
+app.post('/addUserList', addUserList);
+app.get('/showTodo?', redirectToDashboard);
 app.post('/login', handleUserLogin);
 app.post('/signup', handleSignup);
 app.use(handleRequest);
@@ -158,7 +183,6 @@ module.exports = {
   parseUserInfo,
   readBody,
   checkUserCredentials,
-  handleCookies,
-  readCookies,
-  redirectToLogin
+  setCookies,
+  readCookies
 };

@@ -12,12 +12,12 @@
   </style>
   <body>
     <div>
-      <a href="/userProfileTemplate.html"><<</a> <br />
+      <form action="/showTodo" method="GET"><button><<</button></form>
       <label>Title:</label><input type="text" name="title" /> <br />
       <label>List items:</label> <br />
       <button onclick="addItem()">+</button>
     </div>
-    <form action="/login" method="POST">
+    <form action="/addUserList" method="POST">
       <div id="todolists"></div>
       <input type="submit" value="Save" />
     </form>

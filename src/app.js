@@ -1,7 +1,16 @@
 const { App } = require('./frameWork.js');
 const app = new App();
 const fs = require('fs');
-const userInfo = require('../public/data/userInfo.json');
+
+const toDoTemplate = fs.readFileSync(
+  './public/html/todoListTemplate.html',
+  'utf8'
+);
+
+const userProfileTemplate = fs.readFileSync(
+  './public/html/userProfileTemplate.html',
+  'utf8'
+);
 
 const getRequest = function(url) {
   if (url == '/') return './public/html/index.html';
@@ -13,8 +22,6 @@ const readBody = (req, res, next, sendResponse) => {
   req.on('data', chunk => (content += chunk));
   req.on('end', () => {
     req.body = content;
-    console.log(req.body);
-
     next();
   });
 };
@@ -48,38 +55,75 @@ const redirectToLogin = function(res) {
   res.end();
 };
 
-const addUserInfo = function(res, userInfo) {
-  fs.writeFile('./public/data/userInfo.json', JSON.stringify(userInfo), () => {
-    redirectToLogin(res);
-  });
+const addUserInfo = function(res, userDetails) {
+  let userInfo = new Array();
+  userInfo.push(userDetails);
+  fs.writeFile(
+    `./private_data/${userDetails.userId}.json`,
+    JSON.stringify(userInfo),
+    () => {
+      redirectToLogin(res);
+    }
+  );
 };
 
 const handleSignup = function(req, res, next, sendResponse) {
   let userDetails = parseUserInfo(req.body);
-  userInfo.push(userDetails);
-  addUserInfo(res, userInfo);
+  addUserInfo(res, userDetails);
 };
 
-const validateUser = function(currentUserInfo, userInfo) {
-  isCorrectName = currentUserInfo.userId == userInfo.userId;
-  isCorrectPassword = currentUserInfo.password == userInfo.password;
-  return isCorrectName && isCorrectPassword;
+const checkUserCredentials = function(userInfo, currentUserInfo) {
+  userInfo = JSON.parse(userInfo);
+  let password = userInfo[0].password;
+  return password == currentUserInfo.password;
+};
+
+const handleCookies = function(req, res, currentUserInfo, sendResponse) {
+  if (!req.cookies) {
+    res.setHeader('Set-Cookie', 'username=' + currentUserInfo.userId);
+  }
+  sendResponse(res, userProfileTemplate);
+};
+
+const validateUser = function(
+  req,
+  res,
+  currentUserInfo,
+  currentUserFileContent,
+  sendResponse
+) {
+  if (checkUserCredentials(currentUserFileContent, currentUserInfo)) {
+    handleCookies(req, res, currentUserInfo, sendResponse);
+  }
+};
+
+const getUserFileContent = function(
+  req,
+  res,
+  currentUserFile,
+  currentUserInfo,
+  sendResponse
+) {
+  fs.readFile(`./private_data/${currentUserFile}`, 'utf8', function(
+    err,
+    content
+  ) {
+    validateUser(req, res, currentUserInfo, content, sendResponse);
+  });
 };
 
 const handleUserLogin = function(req, res, next, sendResponse) {
   let currentUserInfo = parseUserInfo(req.body);
-  let isValidUser = validateUser.bind(null, currentUserInfo);
-  let validUser = userInfo.filter(isValidUser);
-  if (validUser.length > 0) {
-    if (!req.cookies) {
-      res.setHeader('Set-Cookie', 'username=' + currentUserInfo.userId);
-    }
-    fs.readFile('./public/html/userProfileTemplate.html', 'utf8', function(
-      err,
-      content
-    ) {
-      sendResponse(res, content);
-    });
+  let currentUserFile = `${currentUserInfo.userId}.json`;
+  let userFiles = fs.readdirSync('./private_data');
+  if (userFiles.includes(currentUserFile)) {
+    getUserFileContent(
+      req,
+      res,
+      currentUserFile,
+      currentUserInfo,
+      sendResponse
+    );
     return;
   }
   sendResponse(res, 'login failed');
@@ -97,12 +141,7 @@ const readCookies = function(req, res, next, sendResponse) {
 };
 
 const renderTodoTemplate = function(req, res, next, sendResponse) {
-  fs.readFile('./public/html/todoListTemplate.html', 'utf8', function(
-    err,
-    content
-  ) {
-    sendResponse(res, content);
-  });
+  sendResponse(res, toDoTemplate);
 };
 
 app.use(logRequest);

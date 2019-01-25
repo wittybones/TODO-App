@@ -168,12 +168,37 @@ const backToDashboard = function(req, res, next, sendResponse) {
   sendResponse(res, userProfileWithName);
 };
 
+const parseUserList = function(listData) {
+  let args = {};
+  const splitKeyValue = pair => pair.split('=');
+  const assignKeyValueToArgs = ([key, value]) => (args[key] = value);
+  listData
+    .split('&')
+    .map(splitKeyValue)
+    .forEach(assignKeyValueToArgs);
+  console.log(args);
+  return args;
+};
+
+const addUserList = function(req, res, next, sendResponse) {
+  let userList = parseUserList(req.body);
+  let currentUserFile = `./private_data/${req.cookies.username}.json`;
+  fs.readFile(currentUserFile, 'utf8', function(err, content) {
+    let userContent = JSON.parse(content);
+    userContent.push(userList);
+    fs.writeFile(currentUserFile, JSON.stringify(userContent), () => {});
+  });
+  res.write('done');
+  res.end();
+};
+
 app.use(logRequest);
 app.use(readCookies);
 app.use(readBody);
 app.post('/todolist', renderTodoTemplate);
 app.get('/showTodo?', backToDashboard);
 app.post('/login', handleUserLogin);
+app.post('/addUserList', addUserList);
 app.post('/html/signup', handleSignup);
 app.use(handleRequest);
 

@@ -6,13 +6,13 @@
     <link rel="stylesheet" href="/stylesheet/todolist.css" />
   </head>
   <body>
-    <div>
+    <div style="display:flex">
       <form action="/showTodo" method="GET"><button><<</button></form>
-      <label>Title:</label><input type="text" name="title" /> <br />
-      <label>List items:</label> <br />
       <button onclick="addItem()">+</button>
     </div>
     <form action="/addUserList" method="POST">
+      <label>Title:</label><input type="text" name="title" /> <br />
+      <label>List items:</label> <br />
       <div id="todolists"></div>
       <input type="submit" value="Save" />
     </form>

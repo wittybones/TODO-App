@@ -1,6 +1,12 @@
 const { App } = require('./frameWork.js');
 const app = new App();
 const fs = require('fs');
+const {
+  readBody,
+  logRequest,
+  readCookies,
+  handleRequest
+} = require('./serverUtil');
 
 const toDoTemplate = fs.readFileSync(
   './public/html/todoListTemplate.html',
@@ -13,36 +19,6 @@ const userProfileTemplate = fs.readFileSync(
 );
 
 const loginPageTemplate = fs.readFileSync('./public/html/index.html', 'utf8');
-
-const getRequest = function(url) {
-  if (url == '/') return './public/html/index.html';
-  return './public/' + url;
-};
-
-const readBody = (req, res, next, sendResponse) => {
-  let content = '';
-  req.on('data', chunk => (content += chunk));
-  req.on('end', () => {
-    req.body = content;
-    next();
-  });
-};
-
-const handleRequest = function(req, res, next, sendResponse) {
-  let request = getRequest(req.url);
-  fs.readFile(request, function(err, content) {
-    if (err) {
-      sendResponse(res, 'not Found', 404);
-      return;
-    }
-    sendResponse(res, content, 200);
-  });
-};
-
-const logRequest = function(req, res, next, sendResponse) {
-  console.log(req.method, req.url);
-  next();
-};
 
 const parseUserInfo = function(details) {
   let userId = details.split(/&|=/)[1];
@@ -141,17 +117,6 @@ const invalidUserError = function(res, sendResponse) {
   sendResponse(res, loginTemplateWithErr);
 };
 
-const readCookies = function(req, res, next, sendResponse) {
-  let cookie = req.headers['cookie'];
-  if (cookie) {
-    let cookies = new Object();
-    let [name, value] = cookie.split('=');
-    cookies[name] = value;
-    req.cookies = cookies;
-  }
-  next();
-};
-
 const renderTodoTemplate = function(req, res, next, sendResponse) {
   sendResponse(res, toDoTemplate);
 };
@@ -180,22 +145,34 @@ const parseUserList = function(listData) {
   return args;
 };
 
+const usersList = function(req, res, next, sendResponse) {
+  let userId = req.cookies.username;
+  fs.readFile(`./private_data/${userId}.json`, 'utf8', function(err, content) {
+    let userData = JSON.parse(content);
+    let userLists = userData.map(x => x.title);
+    sendResponse(res, JSON.stringify(userLists));
+  });
+  return;
+};
+
 const addUserList = function(req, res, next, sendResponse) {
   let userList = parseUserList(req.body);
   let currentUserFile = `./private_data/${req.cookies.username}.json`;
   fs.readFile(currentUserFile, 'utf8', function(err, content) {
     let userContent = JSON.parse(content);
     userContent.push(userList);
-    fs.writeFile(currentUserFile, JSON.stringify(userContent), () => {});
+    fs.writeFile(currentUserFile, JSON.stringify(userContent), () => {
+      return;
+    });
   });
-  res.write('done');
-  res.end();
+  usersList(req, res, next, sendResponse);
 };
 
 app.use(logRequest);
 app.use(readCookies);
 app.use(readBody);
 app.post('/todolist', renderTodoTemplate);
+app.get('/getUserLists', usersList);
 app.get('/showTodo?', backToDashboard);
 app.post('/login', handleUserLogin);
 app.post('/addUserList', addUserList);

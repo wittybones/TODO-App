@@ -8,6 +8,8 @@ const {
   handleRequest
 } = require('./serverUtil');
 
+const { Item, User, List } = require('./user');
+
 const toDoTemplate = fs.readFileSync(
   './public/html/todoListTemplate.html',
   'utf8'
@@ -33,77 +35,41 @@ const redirectToLogin = function(res) {
   res.end();
 };
 
-const addUserInfo = function(res, userDetails) {
-  let userInfo = new Array();
-  userInfo.push(userDetails);
-  fs.writeFile(
-    `./private_data/${userDetails.userId}.json`,
-    JSON.stringify(userInfo),
-    () => {
-      redirectToLogin(res);
-    }
-  );
-};
-
 const handleSignup = function(req, res, next, sendResponse) {
-  let userDetails = parseUserInfo(req.body);
-  addUserInfo(res, userDetails);
+  let { userId, password } = parseUserInfo(req.body);
+  let user = new User(userId, password);
+  user.writeUserDetailsToFile();
+  redirectToLogin(res);
 };
 
-const checkUserCredentials = function(userInfo, currentUserInfo) {
+const checkUserCredentials = function(userInfo, user) {
   userInfo = JSON.parse(userInfo);
-  let password = userInfo[0].password;
-  return password == currentUserInfo.password;
+  let password = userInfo.password;
+  return password == user.password;
 };
 
-const setCookies = function(req, res, currentUserInfo) {
+const setCookies = function(req, res, user) {
   if (!req.headers.cookie) {
-    res.setHeader('Set-Cookie', 'username=' + currentUserInfo.userId);
+    res.setHeader('Set-Cookie', 'username=' + user.userId);
   }
-};
-
-const redirectValidUser = function(
-  req,
-  res,
-  currentUserInfo,
-  currentUserFileContent,
-  sendResponse
-) {
-  if (checkUserCredentials(currentUserFileContent, currentUserInfo)) {
-    setCookies(req, res, currentUserInfo);
-    redirectToDashboard(res, sendResponse, currentUserInfo);
-    return;
-  }
-  invalidUserError(res, sendResponse);
-};
-
-const getUserFileContent = function(
-  req,
-  res,
-  currentUserFile,
-  currentUserInfo,
-  sendResponse
-) {
-  fs.readFile(`./private_data/${currentUserFile}`, 'utf8', function(
-    err,
-    content
-  ) {
-    redirectValidUser(req, res, currentUserInfo, content, sendResponse);
-  });
 };
 
 const handleUserLogin = function(req, res, next, sendResponse) {
-  let currentUserInfo = parseUserInfo(req.body);
-  let currentUserFile = `${currentUserInfo.userId}.json`;
+  let { userId, password } = parseUserInfo(req.body);
+  let user = new User(userId, password);
   let userFiles = fs.readdirSync('./private_data');
-  if (userFiles.includes(currentUserFile)) {
-    getUserFileContent(
-      req,
-      res,
-      currentUserFile,
-      currentUserInfo,
-      sendResponse
-    );
+  let userFileName = user.file.replace('./private_data/', '');
+  if (userFiles.includes(userFileName)) {
+    callback = function(err, content) {
+      if (checkUserCredentials(content, user)) {
+        setCookies(req, res, user);
+        redirectToDashboard(res, sendResponse, user);
+        return;
+      } else {
+        invalidUserError(res, sendResponse);
+      }
+    };
+    user.getFile(callback);
     return;
   }
   invalidUserError(res, sendResponse);
@@ -121,8 +87,8 @@ const renderTodoTemplate = function(req, res, next, sendResponse) {
   sendResponse(res, toDoTemplate);
 };
 
-const redirectToDashboard = function(res, sendResponse, currentUserInfo) {
-  let userId = currentUserInfo.userId;
+const redirectToDashboard = function(res, sendResponse, user) {
+  let userId = user.userId;
   let userProfileWithName = userProfileTemplate.replace('#userId#', userId);
   sendResponse(res, userProfileWithName);
 };
@@ -141,30 +107,27 @@ const parseUserList = function(listData) {
     .split('&')
     .map(splitKeyValue)
     .forEach(assignKeyValueToArgs);
-  console.log(args);
   return args;
 };
 
 const usersList = function(req, res, next, sendResponse) {
   let userId = req.cookies.username;
-  fs.readFile(`./private_data/${userId}.json`, 'utf8', function(err, content) {
-    let userData = JSON.parse(content);
-    let userLists = userData.map(x => x.title);
-    sendResponse(res, JSON.stringify(userLists));
-  });
-  return;
+  let user = new User(userId);
+  let lists = user.getListTitles();
+  console.log(lists);
+
+  sendResponse(res, JSON.stringify(lists));
 };
 
 const addUserList = function(req, res, next, sendResponse) {
   let userList = parseUserList(req.body);
-  let currentUserFile = `./private_data/${req.cookies.username}.json`;
-  fs.readFile(currentUserFile, 'utf8', function(err, content) {
-    let userContent = JSON.parse(content);
-    userContent.push(userList);
-    fs.writeFile(currentUserFile, JSON.stringify(userContent), () => {
-      return;
-    });
-  });
+  let userId = req.cookies.username;
+  let user = new User(userId);
+  let list = new List(userList.title);
+  let item = new Item(userList.item1);
+  list.addItem(item);
+  user.addList(list);
+  user.writeListsToFile();
   usersList(req, res, next, sendResponse);
 };
 

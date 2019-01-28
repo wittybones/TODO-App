@@ -53,6 +53,11 @@ class User {
     return listTitles;
   }
 
+  getList(listname) {
+    let list = this.todoLists.filter(todoList => todoList.title == listname);
+    return list[0];
+  }
+
   removeList(list) {
     let listIndex = this.todoLists.indexOf(list);
     this.todoLists.splice(listIndex, 1);

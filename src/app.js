@@ -1,5 +1,5 @@
-const fs = require('fs');
 const { App } = require('./frameWork.js');
+const fs = require('fs');
 const app = new App();
 const {
   readBody,
@@ -144,13 +144,10 @@ const parseUserList = function(listData) {
     .split('&')
     .map(splitKeyValue)
     .forEach(assignKeyValueToArgs);
-  console.log(args);
   return args;
 };
 
 const getItems = function(dataSet) {
-  console.log(dataSet);
-
   const items = [];
   const itemsIndex = Object.keys(dataSet).filter(element => {
     return element.includes('item');
@@ -172,7 +169,7 @@ const createListsHtml = function(list) {
   let removeSymbols = x => unescape(x).replace(/\+/g, ' ');
   let removedSymbolsList = list.map(removeSymbols);
   let addPTag = function(element) {
-    return `<p>${element}</p>`;
+    return `<option value="${element}">${element}</option>`;
   };
   return removedSymbolsList.map(addPTag).join('');
 };
@@ -197,6 +194,11 @@ const addUserList = function(req, res, next, sendResponse) {
   });
 };
 
+const renderLogout = function(req, res, next, sendResponse) {
+  res.setHeader('Set-Cookie', 'username=; expires=' + new Date().toUTCString());
+  redirectToLogin(res);
+};
+
 app.use(logRequest);
 app.use(readCookies);
 app.use(readBody);
@@ -205,6 +207,7 @@ app.get('/showTodo?', backToDashboard);
 app.post('/login', handleUserLogin);
 app.post('/addUserList', addUserList);
 app.post('/html/signup', handleSignup);
+app.post('/logout', renderLogout);
 app.use(handleRequest);
 
 module.exports = {

@@ -1,6 +1,6 @@
+const fs = require('fs');
 const { App } = require('./frameWork.js');
 const app = new App();
-const fs = require('fs');
 const {
   readBody,
   logRequest,
@@ -8,7 +8,7 @@ const {
   handleRequest
 } = require('./serverUtil');
 
-const { Item, User, List } = require('./user');
+const { User, List, Item } = require('./user');
 
 const toDoTemplate = fs.readFileSync(
   './public/html/todoListTemplate.html',
@@ -37,15 +37,15 @@ const redirectToLogin = function(res) {
 
 const handleSignup = function(req, res, next, sendResponse) {
   let { userId, password } = parseUserInfo(req.body);
-  let user = new User(userId, password);
+  let user = new User(userId, password, []);
   user.writeUserDetailsToFile();
   redirectToLogin(res);
 };
 
-const checkUserCredentials = function(userInfo, user) {
+const checkUserCredentials = function(userInfo, currentUserInfo) {
   userInfo = JSON.parse(userInfo);
   let password = userInfo.password;
-  return password == user.password;
+  return password == currentUserInfo.password;
 };
 
 const setCookies = function(req, res, user) {
@@ -54,22 +54,53 @@ const setCookies = function(req, res, user) {
   }
 };
 
-const handleUserLogin = function(req, res, next, sendResponse) {
-  let { userId, password } = parseUserInfo(req.body);
-  let user = new User(userId, password);
+const isValidUserFile = function(userId) {
   let userFiles = fs.readdirSync('./private_data');
-  let userFileName = user.file.replace('./private_data/', '');
-  if (userFiles.includes(userFileName)) {
-    callback = function(err, content) {
-      if (checkUserCredentials(content, user)) {
-        setCookies(req, res, user);
-        redirectToDashboard(res, sendResponse, user);
-        return;
-      } else {
-        invalidUserError(res, sendResponse);
-      }
-    };
-    user.getFile(callback);
+  return userFiles.includes(`${userId}.json`);
+};
+
+const redirectToDashboard = function(res, sendResponse, user) {
+  let userProfileWithName = userProfileTemplate.replace(
+    '#userId#',
+    user.userId
+  );
+  let listTitles = user.getListTitles();
+  let userWithLists = userProfileWithName.replace(
+    '#todoList#',
+    createListsHtml(listTitles)
+  );
+  sendResponse(res, userWithLists);
+};
+
+const handleValidUser = function(req, res, user, sendResponse) {
+  setCookies(req, res, user);
+  redirectToDashboard(res, sendResponse, user);
+  return;
+};
+
+const validateUser = function(
+  req,
+  res,
+  userFileContent,
+  currentUserInfo,
+  sendResponse
+) {
+  let { userId, password, todoLists } = JSON.parse(userFileContent);
+  let user = new User(userId, password, todoLists);
+  if (user.match(currentUserInfo.password)) {
+    handleValidUser(req, res, user, sendResponse);
+    return;
+  }
+  invalidUserError(res, sendResponse);
+};
+
+const handleUserLogin = function(req, res, next, sendResponse) {
+  let currentUserInfo = parseUserInfo(req.body);
+  let currentUserFile = `./private_data/${currentUserInfo.userId}.json`;
+  if (isValidUserFile(currentUserInfo.userId)) {
+    fs.readFile(currentUserFile, 'utf8', function(err, content) {
+      validateUser(req, res, content, currentUserInfo, sendResponse);
+    });
     return;
   }
   invalidUserError(res, sendResponse);
@@ -87,55 +118,89 @@ const renderTodoTemplate = function(req, res, next, sendResponse) {
   sendResponse(res, toDoTemplate);
 };
 
-const redirectToDashboard = function(res, sendResponse, user) {
-  let userId = user.userId;
-  let userProfileWithName = userProfileTemplate.replace('#userId#', userId);
-  sendResponse(res, userProfileWithName);
-};
-
 const backToDashboard = function(req, res, next, sendResponse) {
   let userId = req.cookies.username;
-  let userProfileWithName = userProfileTemplate.replace('#userId#', userId);
-  sendResponse(res, userProfileWithName);
+  fs.readFile(`./private_data/${userId}.json`, 'utf8', function(err, content) {
+    let { userId, password, todoLists } = JSON.parse(content);
+    let user = new User(userId, password, todoLists);
+    let userProfileWithName = userProfileTemplate.replace(
+      '#userId#',
+      user.userId
+    );
+    let listTitles = user.getListTitles();
+    let userWithLists = userProfileWithName.replace(
+      '#todoList#',
+      createListsHtml(listTitles)
+    );
+    sendResponse(res, userWithLists);
+  });
 };
 
 const parseUserList = function(listData) {
-  let args = {};
+  let args = [];
   const splitKeyValue = pair => pair.split('=');
   const assignKeyValueToArgs = ([key, value]) => (args[key] = value);
   listData
     .split('&')
     .map(splitKeyValue)
     .forEach(assignKeyValueToArgs);
+  console.log(args);
   return args;
 };
 
-const usersList = function(req, res, next, sendResponse) {
-  let userId = req.cookies.username;
-  let user = new User(userId);
-  let lists = user.getListTitles();
-  console.log(lists);
+const getItems = function(dataSet) {
+  console.log(dataSet);
 
-  sendResponse(res, JSON.stringify(lists));
+  const items = [];
+  const itemsIndex = Object.keys(dataSet).filter(element => {
+    return element.includes('item');
+  });
+  itemsIndex.forEach(itemIndex => {
+    const item = {};
+    item[itemIndex] = dataSet[itemIndex];
+    items.push(item);
+  });
+  return items;
+};
+
+const createItem = function(item) {
+  const itemIndex = Object.keys(item)[0];
+  return new Item(item[itemIndex]);
+};
+
+const createListsHtml = function(list) {
+  let removeSymbols = x => unescape(x).replace(/\+/g, ' ');
+  let removedSymbolsList = list.map(removeSymbols);
+  let addPTag = function(element) {
+    return `<p>${element}</p>`;
+  };
+  return removedSymbolsList.map(addPTag).join('');
+};
+
+const addUser = function(res, content, userList) {
+  let { userId, password, todoLists } = JSON.parse(content);
+  let user = new User(userId, password, todoLists);
+  let list = new List(userList.title);
+  let items = getItems(userList);
+  let itemsToAdd = items.map(createItem);
+  itemsToAdd.map(item => list.addItem(item));
+  user.addList(list);
+  user.writeUserDetailsToFile();
+  res.end();
 };
 
 const addUserList = function(req, res, next, sendResponse) {
   let userList = parseUserList(req.body);
   let userId = req.cookies.username;
-  let user = new User(userId);
-  let list = new List(userList.title);
-  let item = new Item(userList.item1);
-  list.addItem(item);
-  user.addList(list);
-  user.writeListsToFile();
-  usersList(req, res, next, sendResponse);
+  fs.readFile(`./private_data/${userId}.json`, 'utf8', function(err, content) {
+    addUser(res, content, userList);
+  });
 };
 
 app.use(logRequest);
 app.use(readCookies);
 app.use(readBody);
 app.post('/todolist', renderTodoTemplate);
-app.get('/getUserLists', usersList);
 app.get('/showTodo?', backToDashboard);
 app.post('/login', handleUserLogin);
 app.post('/addUserList', addUserList);

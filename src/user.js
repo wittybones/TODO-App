@@ -1,18 +1,22 @@
 const fs = require('fs');
 
 class User {
-  constructor(userId, password) {
+  constructor(userId, password, todoLists) {
     this.userId = userId;
     this.password = password;
     this.file = `./private_data/${this.userId}.json`;
-    this.todoLists = new Array();
+    this.todoLists = todoLists;
   }
   addList(list) {
     this.todoLists.push(list);
   }
 
+  match(password) {
+    return this.password == password;
+  }
+
   writeToFile(data) {
-    fs.writeFile(this.file, this.stringify(data), () => {});
+    fs.writeFile(this.file, JSON.stringify(data), () => {});
   }
 
   writeListsToFile() {
@@ -22,7 +26,8 @@ class User {
   writeUserDetailsToFile() {
     let userDetails = {
       userId: this.userId,
-      password: this.password
+      password: this.password,
+      todoLists: this.todoLists
     };
     this.writeToFile(userDetails);
   }
@@ -44,10 +49,8 @@ class User {
   }
 
   getListTitles() {
-    let parsedLists = this.todoLists;
-    parsedLists.shift();
-    let lists = parsedLists.map(this.getTitle);
-    return lists;
+    let listTitles = this.todoLists.map(this.getTitle);
+    return listTitles;
   }
 
   removeList(list) {

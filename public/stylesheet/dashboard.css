@@ -1,0 +1,29 @@
+.userProfileDiv {
+  margin-top: 50px;
+  color: white;
+  display: flex;
+  float: left;
+  height: 450px;
+  padding: 50px;
+  width: 40%;
+  border: 2px solid white;
+}
+
+.editListDiv {
+  margin-top: 30px;
+  height: 450px;
+  color: white;
+  padding: 50px;
+  display: flex;
+  float: right;
+  width: 40%;
+  border: 2px solid white;
+}
+
+body {
+  background: black;
+}
+
+h1 {
+  color: white;
+}

@@ -16,7 +16,7 @@ class User {
   }
 
   writeToFile(data) {
-    fs.writeFile(this.file, JSON.stringify(data), () => {});
+    fs.writeFileSync(this.file, JSON.stringify(data));
   }
 
   writeListsToFile() {
@@ -65,8 +65,9 @@ class User {
 }
 
 class List {
-  constructor(title) {
+  constructor(title, description) {
     this.title = title;
+    this.description = description;
     this.items = new Array();
   }
 

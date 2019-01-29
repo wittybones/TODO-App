@@ -10,11 +10,6 @@ const {
 
 const { User, List, Item } = require("./user");
 
-// const toDoTemplate = fs.readFileSync(
-// './public/html/todoListTemplate.html',
-// 'utf8'
-// );
-
 const dashboardTemplate = fs.readFileSync(
   "./public/html/dashboard.html",
   "utf8"
@@ -114,57 +109,6 @@ const invalidUserError = function(res, sendResponse) {
   sendResponse(res, loginTemplateWithErr);
 };
 
-// const renderTodoTemplate = function(req, res, next, sendResponse) {
-// sendResponse(res, toDoTemplate);
-// };
-
-// const backToDashboard = function(req, res, next, sendResponse) {
-// let userId = req.cookies.username;
-// // fs.readFile(`./private_data/${userId}.json`, 'utf8', function(err, content) {
-// let { userId, password, todoLists } = JSON.parse(content);
-// let user = new User(userId, password, todoLists);
-// let userProfileWithName = dashboardTemplate.replace(
-// '#userId#',
-// user.userId
-// );
-// let listTitles = user.getListTitles();
-// let userWithLists = userProfileWithName.replace(
-// '#todoList#',
-// createListsHtml(listTitles)
-// );
-// sendResponse(res, userWithLists);
-// });
-// };
-
-// const parseUserList = function(listData) {
-// let args = [];
-// const splitKeyValue = pair => pair.split('=');
-// const assignKeyValueToArgs = ([key, value]) => (args[key] = value);
-// listData
-// .split('&')
-// .map(splitKeyValue)
-// .forEach(assignKeyValueToArgs);
-// return args;
-// };
-
-// const getItems = function(dataSet) {
-// const items = [];
-// const itemsIndex = Object.keys(dataSet).filter(element => {
-// return element.includes('item');
-// });
-// itemsIndex.forEach(itemIndex => {
-// const item = {};
-// item[itemIndex] = dataSet[itemIndex];
-// items.push(item);
-// });
-// return items;
-// };
-
-// const createItem = function(item) {
-// const itemIndex = Object.keys(item)[0];
-// return new Item(item[itemIndex]);
-// };
-
 const createListsHtml = function(list) {
   let removeSymbols = x => unescape(x).replace(/\+/g, " ");
   let removedSymbolsList = list.map(removeSymbols);
@@ -173,26 +117,6 @@ const createListsHtml = function(list) {
   };
   return removedSymbolsList.map(addPTag).join("");
 };
-
-// const addUser = function(res, content, userList) {
-// let { userId, password, todoLists } = JSON.parse(content);
-// let user = new User(userId, password, todoLists);
-// let list = new List(userList.title);
-// let items = getItems(userList);
-// let itemsToAdd = items.map(createItem);
-// itemsToAdd.map(item => list.addItem(item));
-// user.addList(list);
-// user.writeUserDetailsToFile();
-// res.end();
-// };
-
-// const addUserList = function(req, res, next, sendResponse) {
-// let userList = parseUserList(req.body);
-// let userId = req.cookies.username;
-// // fs.readFile(`./private_data/${userId}.json`, 'utf8', function(err, content) {
-// addUser(res, content, userList);
-// });
-// };
 
 const renderLogout = function(req, res, next, sendResponse) {
   res.setHeader("Set-Cookie", "username=; expires=" + new Date().toUTCString());
@@ -238,12 +162,6 @@ const loadJson = function(req, res) {
   });
 };
 
-const createItem = function(index, content) {
-  let item = new Item(content, index);
-  index++;
-  return item;
-};
-
 const addItems = function(req, res, next, sendResponse) {
   let { values, selectedList } = JSON.parse(req.body);
   let userId = req.cookies.username;
@@ -261,11 +179,22 @@ const addItems = function(req, res, next, sendResponse) {
   });
 };
 
+const deleteList = function(req, res, next, sendResponse) {
+  let selectedTitle = req.body;
+  let userId = req.cookies.username;
+  fs.readFile(`./private_data/${userId}.json`, "utf8", function(err, content) {
+    let { userId, password, todoLists } = JSON.parse(content);
+    let user = new User(userId, password, todoLists);
+    let selectedList = user.getList(selectedTitle);
+    user.removeList(selectedList);
+    user.writeUserDetailsToFile();
+    res.end();
+  });
+};
+
 app.use(logRequest);
 app.use(readCookies);
 app.use(readBody);
-// app.post('/todolist', renderTodoTemplate);
-// app.get('/showTodo?', backToDashboard);
 app.post("/login", handleUserLogin);
 app.post("/addList", addList);
 app.post("/html/signup", handleSignup);
@@ -273,6 +202,7 @@ app.post("/logout", renderLogout);
 app.get("/displayList", loadJson);
 app.post("/getSelectedList", getSelectedList);
 app.post("/addItems", addItems);
+app.post("/deleteList", deleteList);
 app.use(handleRequest);
 
 module.exports = {

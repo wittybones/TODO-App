@@ -91,7 +91,6 @@ class List {
   }
 
   addItem(content) {
-    console.log(this, "sfjsfljflja");
     const itemId = this.getNextItemId();
     let item = new Item(content, itemId, false);
     this.items.push(item);

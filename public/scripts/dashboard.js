@@ -64,8 +64,6 @@ const addItems = function() {
   console.log(selectedList);
   let inputs = document.getElementsByClassName("listsData");
   let values = Object.keys(inputs).map(key => inputs[key].value);
-  // let ids = Object.keys(inputs).map(key => inputs[key].name);
-  // console.log(ids);
   fetch("/addItems", {
     method: "POST",
     body: JSON.stringify({ values, selectedList })
@@ -81,9 +79,17 @@ const edit = function() {
       return response.json();
     })
     .then(function(list) {
-      // document.getElementById("selectedTitle").value = selectList;
       createListHtml(list);
     });
+};
+
+const deleteList = function() {
+  let selectList = document.getElementById("selectedlist").value;
+  fetch("/deleteList", { method: "POST", body: selectList }).then(function(
+    response
+  ) {
+    displayContent();
+  });
 };
 
 window.onload = displayContent;

@@ -1,41 +1,53 @@
-const deleteItem = function(context) {
-  console.log(context);
-  let itemId = context.id.replace("del_", "");
-  console.log(itemId);
-  let input = document.getElementById("" + itemId);
-  document.getElementById("inputItems").removeChild(input);
-  let checkbox = document.getElementById("_" + itemId);
-  document.getElementById("inputItems").removeChild(checkbox);
-  let del_button = document.getElementById("" + context.id);
-  document.getElementById("inputItems").removeChild(del_button);
-};
-
 let itemNumber = 1;
 
+const deleteItem = function(context) {
+  let itemId = context.id.replace('del_', '');
+  let input = document.getElementById('' + itemId);
+  document.getElementById('inputItems').removeChild(input);
+  let checkbox = document.getElementById('_' + itemId);
+  document.getElementById('inputItems').removeChild(checkbox);
+  let del_button = document.getElementById('' + context.id);
+  document.getElementById('inputItems').removeChild(del_button);
+};
+
+const createDeleteButtonDiv = function(itemNumber) {
+  let deleteButton = document.createElement('button');
+  let style = 'height:20px;width:50px';
+  deleteButton.setAttribute('style', style);
+  deleteButton.innerText = 'Delete';
+  deleteButton.id = 'del_' + itemNumber;
+  deleteButton.setAttribute('onclick', `deleteItem({id:'del_${itemNumber}'});`);
+  return deleteButton;
+};
+
+const createItemDiv = function(itemNumber) {
+  let itemDiv = document.createElement('INPUT');
+  itemDiv.setAttribute('type', 'text');
+  itemDiv.setAttribute('style', 'margin-bottom:10px');
+  itemDiv.id = '' + itemNumber;
+  itemDiv.setAttribute('name', 'item' + itemNumber);
+  itemDiv.className = 'listsData';
+  return itemDiv;
+};
+
+const createCheckboxDiv = function(itemNumber) {
+  let checkboxDiv = document.createElement('INPUT');
+  checkboxDiv.setAttribute('type', 'checkbox');
+  checkboxDiv.className = 'checkBox';
+  checkboxDiv.id = '_' + itemNumber;
+  return checkboxDiv;
+};
+
 const addItem = function() {
-  let listsDiv = document.getElementById("inputItems");
-  let newList = document.createElement("INPUT");
-  newList.setAttribute("type", "checkbox");
-  newList.className = "checkBox";
-  newList.id = "_" + itemNumber;
-  let descriptionDiv = document.createElement("INPUT");
-  descriptionDiv.setAttribute("type", "text");
-  descriptionDiv.setAttribute("style", "margin-bottom:10px");
-  descriptionDiv.id = "" + itemNumber;
-  descriptionDiv.setAttribute("name", "item" + itemNumber);
-  descriptionDiv.className = "listsData";
-  let deleteButton = document.createElement("button");
-  deleteButton.style.height = "20px";
-  deleteButton.style.width = "50px";
-  deleteButton.innerText = "Delete";
-  deleteButton.id = "del_" + itemNumber;
-  // let deleteSelectedItem = deleteItem.bind({ id: "del_" + itemNumber });
-  deleteButton.setAttribute("onclick", `deleteItem({id:'del_${itemNumber}'});`);
-  listsDiv.appendChild(deleteButton);
-  listsDiv.appendChild(newList);
-  listsDiv.appendChild(descriptionDiv);
-  let br = document.createElement("br");
-  listsDiv.appendChild(br);
+  let itemsDiv = document.getElementById('inputItems');
+  let deleteButton = createDeleteButtonDiv(itemNumber);
+  let itemDiv = createItemDiv(itemNumber);
+  let checkboxDiv = createCheckboxDiv(itemNumber);
+  itemsDiv.appendChild(deleteButton);
+  itemsDiv.appendChild(checkboxDiv);
+  itemsDiv.appendChild(itemDiv);
+  let br = document.createElement('br');
+  itemsDiv.appendChild(br);
   itemNumber++;
 };
 
@@ -44,21 +56,21 @@ const createOptionHtml = function(title) {
 };
 
 const displayContent = function() {
-  fetch("/displayList")
+  fetch('/displayList')
     .then(function(myLists) {
       return myLists.json();
     })
     .then(function(myTitles) {
-      let optionHtml = myTitles.map(createOptionHtml).join("");
-      document.getElementById("selectedlist").innerHTML = optionHtml;
+      let optionHtml = myTitles.map(createOptionHtml).join('');
+      document.getElementById('selectedlist').innerHTML = optionHtml;
     });
 };
 
 const addList = function() {
-  let title = document.getElementById("listTitle").value;
-  let description = document.getElementById("listDescription").value;
-  fetch("/addList", {
-    method: "POST",
+  let title = document.getElementById('listTitle').value;
+  let description = document.getElementById('listDescription').value;
+  fetch('/addList', {
+    method: 'POST',
     body: JSON.stringify({ title, description })
   }).then(function(response) {
     displayContent();
@@ -80,15 +92,15 @@ const createItemsHtml = function(item) {
 const createListHtml = function(list) {
   let { title, description, items } = list;
   itemNumber = items.length + 1;
-  document.getElementById("selectedTitle").innerText = title;
-  document.getElementById("description").innerText = description;
-  document.getElementById("inputItems").innerHTML = items
+  document.getElementById('selectedTitle').innerText = title;
+  document.getElementById('description').innerText = description;
+  document.getElementById('inputItems').innerHTML = items
     .map(createItemsHtml)
-    .join("");
+    .join('');
 };
 
 const createItemAttributes = function(checkStatus, values) {
-  const conditions = { true: "checked", false: "unchecked" };
+  const conditions = { true: 'checked', false: 'unchecked' };
   let itemAttributes = values.reduce(
     (acc, value) => {
       acc.array.push({
@@ -104,16 +116,16 @@ const createItemAttributes = function(checkStatus, values) {
 };
 
 const addItems = function() {
-  let selectedList = document.getElementById("selectedlist").value;
-  let inputs = document.getElementsByClassName("listsData");
-  let checkValues = document.getElementsByClassName("checkBox");
+  let selectedList = document.getElementById('selectedlist').value;
+  let inputs = document.getElementsByClassName('listsData');
+  let checkValues = document.getElementsByClassName('checkBox');
   let checkStatus = Object.keys(checkValues).map(
     key => checkValues[key].checked
   );
   let values = Object.keys(inputs).map(key => inputs[key].value);
   let itemAttributes = createItemAttributes(checkStatus, values);
-  fetch("/addItems", {
-    method: "POST",
+  fetch('/addItems', {
+    method: 'POST',
     body: JSON.stringify({ itemAttributes, selectedList })
   }).then(function(response) {
     console.log(response);
@@ -121,8 +133,8 @@ const addItems = function() {
 };
 
 const edit = function() {
-  let selectList = document.getElementById("selectedlist").value;
-  fetch("/getSelectedList", { method: "POST", body: selectList })
+  let selectList = document.getElementById('selectedlist').value;
+  fetch('/getSelectedList', { method: 'POST', body: selectList })
     .then(function(response) {
       return response.json();
     })
@@ -132,8 +144,8 @@ const edit = function() {
 };
 
 const deleteList = function() {
-  let selectList = document.getElementById("selectedlist").value;
-  fetch("/deleteList", { method: "POST", body: selectList }).then(function(
+  let selectList = document.getElementById('selectedlist').value;
+  fetch('/deleteList', { method: 'POST', body: selectList }).then(function(
     response
   ) {
     displayContent();

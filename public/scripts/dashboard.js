@@ -1,3 +1,15 @@
+const deleteItem = function(context) {
+  console.log(context);
+  let itemId = context.id.replace("del_", "");
+  console.log(itemId);
+  let input = document.getElementById("" + itemId);
+  document.getElementById("inputItems").removeChild(input);
+  let checkbox = document.getElementById("_" + itemId);
+  document.getElementById("inputItems").removeChild(checkbox);
+  let del_button = document.getElementById("" + context.id);
+  document.getElementById("inputItems").removeChild(del_button);
+};
+
 let itemNumber = 1;
 
 const addItem = function() {
@@ -5,15 +17,22 @@ const addItem = function() {
   let newList = document.createElement("INPUT");
   newList.setAttribute("type", "checkbox");
   newList.className = "checkBox";
-  listsDiv.appendChild(newList);
+  newList.id = "_" + itemNumber;
   let descriptionDiv = document.createElement("INPUT");
   descriptionDiv.setAttribute("type", "text");
-  descriptionDiv.setAttribute(
-    "style",
-    "width:100px;height:15px;margin-bottom:10px"
-  );
+  descriptionDiv.setAttribute("style", "margin-bottom:10px");
+  descriptionDiv.id = "" + itemNumber;
   descriptionDiv.setAttribute("name", "item" + itemNumber);
   descriptionDiv.className = "listsData";
+  let deleteButton = document.createElement("button");
+  deleteButton.style.height = "20px";
+  deleteButton.style.width = "50px";
+  deleteButton.innerText = "Delete";
+  deleteButton.id = "del_" + itemNumber;
+  // let deleteSelectedItem = deleteItem.bind({ id: "del_" + itemNumber });
+  deleteButton.setAttribute("onclick", `deleteItem({id:'del_${itemNumber}'});`);
+  listsDiv.appendChild(deleteButton);
+  listsDiv.appendChild(newList);
   listsDiv.appendChild(descriptionDiv);
   let br = document.createElement("br");
   listsDiv.appendChild(br);
@@ -49,14 +68,18 @@ const addList = function() {
 const createItemsHtml = function(item) {
   let { content, id, status } = item;
   let checkboxHtml = `<input type="checkbox" id='_${id}' class='checkBox' name='${id}' ${status}>`;
+  let deleteButton = `<button style='height:20px;width:50px' id='del_${id}' onclick='deleteItem(this)'>Delete</button>`;
   return (
+    deleteButton +
     checkboxHtml +
     `<input type='text' value='${content}' class='listsData' id='${id}'><br />`
   );
+  //+ deleteButton
 };
 
 const createListHtml = function(list) {
   let { title, description, items } = list;
+  itemNumber = items.length + 1;
   document.getElementById("selectedTitle").innerText = title;
   document.getElementById("description").innerText = description;
   document.getElementById("inputItems").innerHTML = items
@@ -65,13 +88,13 @@ const createListHtml = function(list) {
 };
 
 const createItemAttributes = function(checkStatus, values) {
+  const conditions = { true: "checked", false: "unchecked" };
   let itemAttributes = values.reduce(
     (acc, value) => {
-      status = "unchecked";
-      if (checkStatus[acc.index] == true) {
-        status = "checked";
-      }
-      acc.array.push({ status: status, content: value });
+      acc.array.push({
+        status: conditions[checkStatus[acc.index]],
+        content: value
+      });
       acc.index++;
       return acc;
     },

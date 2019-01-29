@@ -36,12 +36,10 @@
       <br />
       <div id="todolists" style="margin-top:50px; margin-left: -200px;">
         <h1>My ToDo list:</h1>
-        <form action="/editList" method="POST">
-          <select id="selectedlist" name="selectList">
-            #todoList#
-          </select>
-          <input type="submit" value="edit" />
-        </form>
+        <select id="selectedlist" name="selectList">
+          #todoList#
+        </select>
+        <button onclick="edit();">Edit</button>
       </div>
     </div>
 
@@ -51,16 +49,23 @@
           Add Item
         </button>
         <br />
-        <form action="/addUserList" method="POST" style="margin-left: 100px; ">
+        <form action="">
           <label>Title:</label>
-          <p id="title"></p>
+          <p id="selectedTitle"></p>
           <br />
-          <br />
-          <label>List items:</label> <br />
-          <br />
-          <div id="inputItems"></div>
-          <input type="submit" value="Save" />
+          <label>description:</label>
+          <p id="description"></p>
         </form>
+        <br />
+        <br />
+        <label>List items:</label> <br />
+        <br />
+        <div id="inputItems"></div>
+        <div>
+          <button onclick="addItems()" style="height:20px;width:40px">
+            Save
+          </button>
+        </div>
       </div>
     </div>
   </body>

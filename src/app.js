@@ -1,14 +1,14 @@
-const { App } = require('./frameWork.js');
-const fs = require('fs');
+const { App } = require("./frameWork.js");
+const fs = require("fs");
 const app = new App();
 const {
   readBody,
   logRequest,
   readCookies,
   handleRequest
-} = require('./serverUtil');
+} = require("./serverUtil");
 
-const { User, List, Item } = require('./user');
+const { User, List, Item } = require("./user");
 
 // const toDoTemplate = fs.readFileSync(
 // './public/html/todoListTemplate.html',
@@ -16,11 +16,11 @@ const { User, List, Item } = require('./user');
 // );
 
 const dashboardTemplate = fs.readFileSync(
-  './public/html/dashboard.html',
-  'utf8'
+  "./public/html/dashboard.html",
+  "utf8"
 );
 
-const loginPageTemplate = fs.readFileSync('./public/html/index.html', 'utf8');
+const loginPageTemplate = fs.readFileSync("./public/html/index.html", "utf8");
 
 const parseUserInfo = function(details) {
   let userId = details.split(/&|=/)[1];
@@ -30,7 +30,7 @@ const parseUserInfo = function(details) {
 
 const redirectToLogin = function(res) {
   res.writeHead(302, {
-    Location: '/html/index.html'
+    Location: "/html/index.html"
   });
   res.end();
 };
@@ -50,23 +50,23 @@ const checkUserCredentials = function(userInfo, currentUserInfo) {
 
 const setCookies = function(req, res, user) {
   if (!req.headers.cookie) {
-    res.setHeader('Set-Cookie', 'username=' + user.userId);
+    res.setHeader("Set-Cookie", "username=" + user.userId);
   }
 };
 
 const isValidUserFile = function(userId) {
-  let userFiles = fs.readdirSync('./private_data');
+  let userFiles = fs.readdirSync("./private_data");
   return userFiles.includes(`${userId}.json`);
 };
 
 const redirectToDashboard = function(res, sendResponse, user) {
   let dashboardTemplateWithName = dashboardTemplate.replace(
-    '#userId#',
+    "#userId#",
     user.userId
   );
   let listTitles = user.getListTitles();
   let userWithLists = dashboardTemplateWithName.replace(
-    '#todoList#',
+    "#todoList#",
     createListsHtml(listTitles)
   );
   sendResponse(res, userWithLists);
@@ -98,7 +98,7 @@ const handleUserLogin = function(req, res, next, sendResponse) {
   let currentUserInfo = parseUserInfo(req.body);
   let currentUserFile = `./private_data/${currentUserInfo.userId}.json`;
   if (isValidUserFile(currentUserInfo.userId)) {
-    fs.readFile(currentUserFile, 'utf8', function(err, content) {
+    fs.readFile(currentUserFile, "utf8", function(err, content) {
       validateUser(req, res, content, currentUserInfo, sendResponse);
     });
     return;
@@ -108,8 +108,8 @@ const handleUserLogin = function(req, res, next, sendResponse) {
 
 const invalidUserError = function(res, sendResponse) {
   let loginTemplateWithErr = loginPageTemplate.replace(
-    '______',
-    'login failed'
+    "______",
+    "login failed"
   );
   sendResponse(res, loginTemplateWithErr);
 };
@@ -166,12 +166,12 @@ const invalidUserError = function(res, sendResponse) {
 // };
 
 const createListsHtml = function(list) {
-  let removeSymbols = x => unescape(x).replace(/\+/g, ' ');
+  let removeSymbols = x => unescape(x).replace(/\+/g, " ");
   let removedSymbolsList = list.map(removeSymbols);
   let addPTag = function(element) {
     return `<option value="${element}">${element}</option>`;
   };
-  return removedSymbolsList.map(addPTag).join('');
+  return removedSymbolsList.map(addPTag).join("");
 };
 
 // const addUser = function(res, content, userList) {
@@ -195,8 +195,20 @@ const createListsHtml = function(list) {
 // };
 
 const renderLogout = function(req, res, next, sendResponse) {
-  res.setHeader('Set-Cookie', 'username=; expires=' + new Date().toUTCString());
+  res.setHeader("Set-Cookie", "username=; expires=" + new Date().toUTCString());
   redirectToLogin(res);
+};
+
+const getSelectedList = function(req, res, next, sendResponse) {
+  let list = req.body;
+  let userId = req.cookies.username;
+  fs.readFile(`./private_data/${userId}.json`, "utf8", function(err, content) {
+    let { userId, password, todoLists } = JSON.parse(content);
+    let user = new User(userId, password, todoLists);
+    let selectedList = user.getList(list);
+    res.write(JSON.stringify(selectedList));
+    res.end();
+  });
 };
 
 const addUserList = function(res, content, userList) {
@@ -211,17 +223,40 @@ const addUserList = function(res, content, userList) {
 const addList = function(req, res, next, sendResponse) {
   let { title, description } = JSON.parse(req.body);
   let userId = req.cookies.username;
-  fs.readFile(`./private_data/${userId}.json`, 'utf8', function(err, content) {
+  fs.readFile(`./private_data/${userId}.json`, "utf8", function(err, content) {
     addUserList(res, content, { title, description });
   });
 };
 
 const loadJson = function(req, res) {
   let userId = req.cookies.username;
-  fs.readFile(`./private_data/${userId}.json`, 'utf8', function(err, content) {
+  fs.readFile(`./private_data/${userId}.json`, "utf8", function(err, content) {
     let { todoLists } = JSON.parse(content);
     let listTitles = todoLists.map(list => list.title);
     res.write(JSON.stringify(listTitles));
+    res.end();
+  });
+};
+
+const createItem = function(index, content) {
+  let item = new Item(content, index);
+  index++;
+  return item;
+};
+
+const addItems = function(req, res, next, sendResponse) {
+  let { values, selectedList } = JSON.parse(req.body);
+  let userId = req.cookies.username;
+  fs.readFile(`./private_data/${userId}.json`, "utf8", function(err, content) {
+    let { userId, password, todoLists } = JSON.parse(content);
+    let user = new User(userId, password, todoLists);
+    let { title, description, items } = user.getList(selectedList);
+    let latestList = new List(title, description);
+    latestList.replaceItems(items);
+    values.map(latestList.addItem.bind(latestList));
+    user.removeList(selectedList);
+    user.addList(latestList);
+    user.writeUserDetailsToFile();
     res.end();
   });
 };
@@ -231,11 +266,13 @@ app.use(readCookies);
 app.use(readBody);
 // app.post('/todolist', renderTodoTemplate);
 // app.get('/showTodo?', backToDashboard);
-app.post('/login', handleUserLogin);
-app.post('/addList', addList);
-app.post('/html/signup', handleSignup);
-app.post('/logout', renderLogout);
-app.get('/displayList', loadJson);
+app.post("/login", handleUserLogin);
+app.post("/addList", addList);
+app.post("/html/signup", handleSignup);
+app.post("/logout", renderLogout);
+app.get("/displayList", loadJson);
+app.post("/getSelectedList", getSelectedList);
+app.post("/addItems", addItems);
 app.use(handleRequest);
 
 module.exports = {

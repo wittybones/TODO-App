@@ -1,4 +1,12 @@
-const fs = require('fs');
+const fs = require("fs");
+
+class Item {
+  constructor(content, id, status) {
+    this.content = content;
+    this.id = id;
+    this.status = status;
+  }
+}
 
 class User {
   constructor(userId, password, todoLists) {
@@ -41,7 +49,7 @@ class User {
   }
 
   getFile(callback) {
-    fs.readFile(this.file, 'utf8', callback);
+    fs.readFile(this.file, "utf8", callback);
   }
 
   getTitle(element) {
@@ -71,28 +79,35 @@ class List {
     this.items = new Array();
   }
 
-  addItem(item) {
+  replaceItems(items) {
+    this.items = items;
+  }
+
+  getNextItemId() {
+    if (this.items.length <= 0) {
+      return 1;
+    }
+    return this.items[this.items.length - 1].id + 1;
+  }
+
+  addItem(content) {
+    console.log(this, "sfjsfljflja");
+    const itemId = this.getNextItemId();
+    let item = new Item(content, itemId, false);
     this.items.push(item);
   }
 
   doneItem(item) {
-    item.status = 'done';
+    item.status = "done";
   }
 
   undoneItem(item) {
-    item.status = 'undone';
+    item.status = "undone";
   }
 
   removeItem(item) {
     let itemIndex = this.items.indexOf(item);
     this.items.splice(itemIndex, 1);
-  }
-}
-
-class Item {
-  constructor(content, status) {
-    this.content = content;
-    this.status = status;
   }
 }
 

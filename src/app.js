@@ -163,15 +163,14 @@ const loadJson = function(req, res) {
 };
 
 const addItems = function(req, res, next, sendResponse) {
-  let { values, selectedList } = JSON.parse(req.body);
+  let { itemAttributes, selectedList } = JSON.parse(req.body);
   let userId = req.cookies.username;
   fs.readFile(`./private_data/${userId}.json`, "utf8", function(err, content) {
     let { userId, password, todoLists } = JSON.parse(content);
     let user = new User(userId, password, todoLists);
     let { title, description, items } = user.getList(selectedList);
     let latestList = new List(title, description);
-    latestList.replaceItems(items);
-    values.map(latestList.addItem.bind(latestList));
+    itemAttributes.map(latestList.addItem.bind(latestList));
     user.removeList(selectedList);
     user.addList(latestList);
     user.writeUserDetailsToFile();

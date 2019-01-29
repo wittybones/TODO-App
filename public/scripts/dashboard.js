@@ -4,6 +4,7 @@ const addItem = function() {
   let listsDiv = document.getElementById("inputItems");
   let newList = document.createElement("INPUT");
   newList.setAttribute("type", "checkbox");
+  newList.className = "checkBox";
   listsDiv.appendChild(newList);
   let descriptionDiv = document.createElement("INPUT");
   descriptionDiv.setAttribute("type", "text");
@@ -46,8 +47,12 @@ const addList = function() {
 };
 
 const createItemsHtml = function(item) {
-  let { content, id } = item;
-  return `<input type='text' value='${content}' id='${id}'>`;
+  let { content, id, status } = item;
+  let checkboxHtml = `<input type="checkbox" id='_${id}' class='checkBox' name='${id}' ${status}>`;
+  return (
+    checkboxHtml +
+    `<input type='text' value='${content}' class='listsData' id='${id}'><br />`
+  );
 };
 
 const createListHtml = function(list) {
@@ -59,14 +64,34 @@ const createListHtml = function(list) {
     .join("");
 };
 
+const createItemAttributes = function(checkStatus, values) {
+  let itemAttributes = values.reduce(
+    (acc, value) => {
+      status = "unchecked";
+      if (checkStatus[acc.index] == true) {
+        status = "checked";
+      }
+      acc.array.push({ status: status, content: value });
+      acc.index++;
+      return acc;
+    },
+    { array: [], index: 0 }
+  );
+  return itemAttributes.array;
+};
+
 const addItems = function() {
   let selectedList = document.getElementById("selectedlist").value;
-  console.log(selectedList);
   let inputs = document.getElementsByClassName("listsData");
+  let checkValues = document.getElementsByClassName("checkBox");
+  let checkStatus = Object.keys(checkValues).map(
+    key => checkValues[key].checked
+  );
   let values = Object.keys(inputs).map(key => inputs[key].value);
+  let itemAttributes = createItemAttributes(checkStatus, values);
   fetch("/addItems", {
     method: "POST",
-    body: JSON.stringify({ values, selectedList })
+    body: JSON.stringify({ itemAttributes, selectedList })
   }).then(function(response) {
     console.log(response);
   });

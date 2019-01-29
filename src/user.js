@@ -90,9 +90,9 @@ class List {
     return this.items[this.items.length - 1].id + 1;
   }
 
-  addItem(content) {
+  addItem({ status, content }) {
     const itemId = this.getNextItemId();
-    let item = new Item(content, itemId, false);
+    let item = new Item(content, itemId, status);
     this.items.push(item);
   }
 

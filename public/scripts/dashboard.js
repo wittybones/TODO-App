@@ -14,7 +14,7 @@ const createDeleteButtonDiv = function(itemNumber) {
   let deleteButton = document.createElement("button");
   deleteButton.setAttribute(
     "style",
-    "font-size:20px;margin-left:10px;background-color:#00ff80;border-radius: 5px"
+    "font-size:20px;margin-left:10px;background-color:#F1F8FF;border-radius: 5px"
   );
   deleteButton.innerText = "Delete";
   deleteButton.id = "del_" + itemNumber;

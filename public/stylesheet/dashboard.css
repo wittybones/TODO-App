@@ -1,29 +1,104 @@
-.userProfileDiv {
-  margin-top: 50px;
-  color: white;
-  display: flex;
-  float: left;
-  height: 450px;
-  padding: 50px;
-  width: 40%;
-  border: 2px solid white;
-}
-
-.editListDiv {
-  margin-top: 30px;
-  height: 450px;
-  color: white;
-  padding: 50px;
-  display: flex;
-  float: right;
-  width: 40%;
-  border: 2px solid white;
-}
-
 body {
-  background: black;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+}
+.headerDiv {
+  font-size: 50px;
+  width: 100%;
+  height: 70px;
+  background-color: #f1f8ff;
+}
+.logoutBtn {
+  font-size: 25px;
+  float: right;
+  margin-top: -35px;
+  margin-right: 10px;
+  background-color: #a5a9d6;
+}
+.leftDiv {
+  margin-top: 20px;
+  border: 2px solid black;
+  width: 40%;
+  height: 625px;
+  padding-top: 50px;
+  background-color: #a5a9d6;
+}
+.addTodoHeader {
+  font-size: 35px;
+  text-align: center;
 }
 
-h1 {
-  color: white;
+.titleDiv {
+  font-size: 30px;
+  margin-left: 100px;
+  padding: 10px;
+}
+.descriptionArea {
+  font-size: 30px;
+  margin-left: 100px;
+  padding: 10px;
+}
+
+.addTodoBtn {
+  font-size: 25px;
+  margin-top: 30px;
+  margin-left: 220px;
+  background-color: #f1f8ff;
+  border-radius: 5px;
+}
+
+.selectTodo {
+  justify-content: center;
+  display: flex;
+  padding: 40px;
+}
+
+.selectLabel {
+  font-size: 20px;
+  padding: 10px;
+}
+
+.modifyTodo {
+  display: flex;
+  padding-top: 50px;
+}
+
+.editTodoBtn {
+  font-size: 25px;
+  margin-top: 30px;
+  margin-left: 150px;
+  background-color: #f1f8ff;
+  border-radius: 5px;
+}
+
+.deleteTodoBtn {
+  font-size: 25px;
+  margin-top: 30px;
+  margin-left: 20px;
+  background-color: #f1f8ff;
+  border-radius: 5px;
+}
+
+.rightDiv {
+  margin-top: 20px;
+  border: 2px solid black;
+  width: 60%;
+  margin-left: 20px;
+  height: 625px;
+  padding-top: 50px;
+  background-color: #a5a9d6;
+}
+
+.addItemsBtn {
+  font-size: 25px;
+  margin-left: 650px;
+  background-color: #f1f8ff;
+  border-radius: 5px;
+}
+
+.addItemBtn {
+  font-size: 25px;
+  margin-top: 30px;
+  margin-left: 20px;
+  background-color: #f1f8ff;
+  border-radius: 5px;
 }

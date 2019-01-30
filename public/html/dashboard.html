@@ -2,28 +2,21 @@
 <html>
   <head>
     <title>My TODO</title>
+    <link rel="stylesheet" href="/stylesheet/dashboard.css" />
     <script src="/scripts/dashboard.js"></script>
   </head>
-  <body
-    style="font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif"
-  >
-    <div style="font-size:50px;width:100%;height:70px;background-color:#F1F8FF">
+  <body>
+    <div class="headerDiv">
       Welcome #userId# !
       <form action="/logout" method="POST">
-        <button
-          style="font-size:25px;float:right;margin-top:-35px;margin-right:10px;background-color:#A5A9D6"
-        >
-          Logout
-        </button>
+        <button class="logoutBtn">Logout</button>
       </form>
     </div>
 
     <main style="display:flex">
-      <div
-        style="margin-top: 20px;border:2px solid black;width:40%;height:625px;padding-top:50px;background-color:#A5A9D6"
-      >
-        <header style="font-size:35px;text-align:center">Add TODO</header>
-        <div style="font-size:30px;margin-left:100px;padding:10px">
+      <div class="leftDiv">
+        <header class="addTodoHeader">Add TODO</header>
+        <div class="titleDiv">
           <label>Title:</label
           ><input
             type="text"
@@ -32,7 +25,7 @@
             style="height:20px;width:200px"
           />
         </div>
-        <div style="font-size:30px;margin-left:100px;padding:10px">
+        <div class="descriptionArea">
           <label>Description:</label
           ><textarea
             name="description"
@@ -42,50 +35,27 @@
           ></textarea>
         </div>
         <div>
-          <button
-            onclick="addList()"
-            style="font-size:25px;margin-top: 30px;margin-left:220px;background-color:#F1F8FF;border-radius: 5px"
-          >
-            Add TODO
-          </button>
+          <button onclick="addList()" class="addTodoBtn">Add TODO</button>
         </div>
-        <div style="justify-content:center;display:flex;padding:40px">
-          <label style="font-size:20px;padding:10px">Select TODO:</label>
+        <div class="selectTodo">
+          <label class="selectLabel">Select TODO:</label>
           <select
             name="selectedList"
             id="selectedlist"
             style="height:30px;width:200px"
           >
-            <!-- #todoList#</select -->
           </select>
-          <!-- > -->
         </div>
-        <div style="display:flex;padding-top:50px">
-          <button
-            onclick="edit()"
-            style="font-size:25px;margin-top: 30px;margin-left:150px;background-color:#F1F8FF;border-radius: 5px"
-          >
-            Edit TODO
-          </button>
-          <button
-            onclick="deleteList()"
-            style="font-size:25px;margin-top: 30px;margin-left:20px;background-color:#F1F8FF;border-radius: 5px"
-          >
+        <div class="modifyTodo">
+          <button onclick="edit()" class="editTodoBtn">Edit TODO</button>
+          <button onclick="deleteList()" class="deleteTodoBtn">
             Delete TODO
           </button>
         </div>
       </div>
-      <div
-        style="margin-top: 20px;border:2px solid
-        black;width:60%;margin-left:20px;height:625px;padding-top:50px;background-color:#A5A9D6"
-      >
+      <div class="rightDiv">
         <div>
-          <button
-            onclick="addItems()"
-            style="font-size:25px;margin-left:650px;background-color:#F1F8FF;border-radius: 5px"
-          >
-            Save TODO
-          </button>
+          <button class="addItemsBtn" onclick="addItems()">Save TODO</button>
         </div>
         <div style="font-size:30px;margin-left:100px;padding:10px;">
           <label>TODO Title:</label>
@@ -97,12 +67,7 @@
         </div>
         <div style="font-size:30px;margin-left:110px;">
           <label>TODO Items:</label>
-          <button
-            onclick="addItem()"
-            style="font-size:25px;margin-top: 30px;margin-left:20px;background-color:#F1F8FF;border-radius: 5px"
-          >
-            Add Item
-          </button>
+          <button class="addItemBtn" onclick="addItem()">Add Item</button>
           <div id="inputItems" style="padding-top:40px"></div>
         </div>
       </div>

@@ -84,7 +84,7 @@ const addList = function() {
 const createItemsHtml = function(item) {
   let { content, id, status } = item;
   let checkboxHtml = `<input type="checkbox" id='_${id}' class='checkBox' name='${id}' ${status} style='zoom:1.5'>`;
-  let deleteButton = `<button style='font-size:20px;margin-left:10px;background-color:#00ff80;border-radius: 5px' id='del_${id}' onclick='deleteItem(this)'>Delete</button>`;
+  let deleteButton = `<button style='font-size:20px;margin-left:10px;background-color:#F1F8FF;border-radius: 5px' id='del_${id}' onclick='deleteItem(this)'>Delete</button>`;
   let inputText = `<input type='text' value='${content}' class='listsData' id='${id}' style='height:20px;width:200px'><br />`;
   return deleteButton + checkboxHtml + inputText + "<br />";
 };

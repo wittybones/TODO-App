@@ -1,4 +1,4 @@
-const fs = require("fs");
+const fs = require('fs');
 
 class Item {
   constructor(content, id, status) {
@@ -49,7 +49,7 @@ class User {
   }
 
   getFile(callback) {
-    fs.readFile(this.file, "utf8", callback);
+    fs.readFile(this.file, 'utf8', callback);
   }
 
   getTitle(element) {
@@ -84,10 +84,9 @@ class List {
   }
 
   getNextItemId() {
-    if (this.items.length <= 0) {
-      return 1;
-    }
-    return this.items[this.items.length - 1].id + 1;
+    const itemsLength = this.items.length;
+    const lastItem = this.items[itemsLength - 1];
+    return (lastItem && lastItem.id + 1) || 1;
   }
 
   addItem({ status, content }) {
@@ -97,11 +96,11 @@ class List {
   }
 
   doneItem(item) {
-    item.status = "done";
+    item.status = 'done';
   }
 
   undoneItem(item) {
-    item.status = "undone";
+    item.status = 'undone';
   }
 
   removeItem(item) {

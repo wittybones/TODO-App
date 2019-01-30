@@ -59,11 +59,6 @@ const redirectToDashboard = function(res, sendResponse, user) {
     "#userId#",
     user.userId
   );
-  // let listTitles = user.getListTitles();
-  // let userWithLists = dashboardTemplateWithName.replace(
-  // "#todoList#",
-  // createListsHtml(listTitles)
-  // );
   sendResponse(res, dashboardTemplateWithName);
 };
 
@@ -109,30 +104,28 @@ const invalidUserError = function(res, sendResponse) {
   sendResponse(res, loginTemplateWithErr);
 };
 
-const createListsHtml = function(list) {
-  let removeSymbols = x => unescape(x).replace(/\+/g, " ");
-  let removedSymbolsList = list.map(removeSymbols);
-  let addPTag = function(element) {
-    return `<option value="${element}">${element}</option>`;
-  };
-  return removedSymbolsList.map(addPTag).join("");
-};
-
 const renderLogout = function(req, res, next, sendResponse) {
   res.setHeader("Set-Cookie", "username=; expires=" + new Date().toUTCString());
   redirectToLogin(res);
 };
 
-const getSelectedList = function(req, res, next, sendResponse) {
-  let list = req.body;
+const createUser = function(req, res, callback, sendResponse) {
   let userId = req.cookies.username;
   fs.readFile(`./private_data/${userId}.json`, "utf8", function(err, content) {
     let { userId, password, todoLists } = JSON.parse(content);
     let user = new User(userId, password, todoLists);
-    let selectedList = user.getList(list);
-    res.write(JSON.stringify(selectedList));
-    res.end();
+    callback(req, res, user, sendResponse);
   });
+};
+
+const selectList = function(req, res, user, sendResponse) {
+  let list = req.body;
+  let selectedList = user.getList(list);
+  sendResponse(res, JSON.stringify(selectedList));
+};
+
+const getSelectedList = function(req, res, next, sendResponse) {
+  createUser(req, res, selectList, sendResponse);
 };
 
 const addUserList = function(res, content, userList) {
@@ -152,43 +145,40 @@ const addList = function(req, res, next, sendResponse) {
   });
 };
 
-const loadJson = function(req, res) {
-  let userId = req.cookies.username;
-  fs.readFile(`./private_data/${userId}.json`, "utf8", function(err, content) {
-    let { todoLists } = JSON.parse(content);
-    let listTitles = todoLists.map(list => list.title);
-    res.write(JSON.stringify(listTitles));
-    res.end();
-  });
+const getTitlesList = function(req, res, user, sendResponse) {
+  let listTitles = user.getListTitles();
+  sendResponse(res, JSON.stringify(listTitles));
+};
+
+const loadJson = function(req, res, next, sendResponse) {
+  createUser(req, res, getTitlesList, sendResponse);
+};
+
+const updateItems = function(req, res, user, sendResponse) {
+  let { itemAttributes, selectedList } = JSON.parse(req.body);
+  let { title, description } = user.getList(selectedList);
+  let latestList = new List(title, description);
+  itemAttributes.map(latestList.addItem.bind(latestList));
+  user.removeList(selectedList);
+  user.addList(latestList);
+  user.writeUserDetailsToFile();
+  res.end();
 };
 
 const addItems = function(req, res, next, sendResponse) {
-  let { itemAttributes, selectedList } = JSON.parse(req.body);
-  let userId = req.cookies.username;
-  fs.readFile(`./private_data/${userId}.json`, "utf8", function(err, content) {
-    let { userId, password, todoLists } = JSON.parse(content);
-    let user = new User(userId, password, todoLists);
-    let { title, description, items } = user.getList(selectedList);
-    let latestList = new List(title, description);
-    itemAttributes.map(latestList.addItem.bind(latestList));
-    user.removeList(selectedList);
-    user.addList(latestList);
-    user.writeUserDetailsToFile();
-    res.end();
-  });
+  createUser(req, res, updateItems, sendResponse);
+};
+
+const removeList = function(req, res, user, sendResponse) {
+  let selectedTitle = req.body;
+  let selectedList = user.getList(selectedTitle);
+  user.removeList(selectedList);
+  user.writeUserDetailsToFile();
+  res.end();
 };
 
 const deleteList = function(req, res, next, sendResponse) {
-  let selectedTitle = req.body;
-  let userId = req.cookies.username;
-  fs.readFile(`./private_data/${userId}.json`, "utf8", function(err, content) {
-    let { userId, password, todoLists } = JSON.parse(content);
-    let user = new User(userId, password, todoLists);
-    let selectedList = user.getList(selectedTitle);
-    user.removeList(selectedList);
-    user.writeUserDetailsToFile();
-    res.end();
-  });
+  createUser(req, res, removeList, sendResponse);
 };
 
 app.use(logRequest);

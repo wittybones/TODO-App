@@ -1,4 +1,4 @@
-const fs = require('fs');
+const fs = require("fs");
 
 class Item {
   constructor(content, id, status) {
@@ -49,7 +49,7 @@ class User {
   }
 
   getFile(callback) {
-    fs.readFile(this.file, 'utf8', callback);
+    fs.readFile(this.file, "utf8", callback);
   }
 
   getTitle(element) {
@@ -67,7 +67,9 @@ class User {
   }
 
   removeList(list) {
-    let listIndex = this.todoLists.indexOf(list);
+    let listIndex = this.todoLists.findIndex(function(todolist) {
+      return todolist.title == list;
+    });
     this.todoLists.splice(listIndex, 1);
   }
 }
@@ -96,11 +98,11 @@ class List {
   }
 
   doneItem(item) {
-    item.status = 'done';
+    item.status = "done";
   }
 
   undoneItem(item) {
-    item.status = 'undone';
+    item.status = "undone";
   }
 
   removeItem(item) {

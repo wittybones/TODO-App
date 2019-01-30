@@ -59,12 +59,12 @@ const redirectToDashboard = function(res, sendResponse, user) {
     "#userId#",
     user.userId
   );
-  let listTitles = user.getListTitles();
-  let userWithLists = dashboardTemplateWithName.replace(
-    "#todoList#",
-    createListsHtml(listTitles)
-  );
-  sendResponse(res, userWithLists);
+  // let listTitles = user.getListTitles();
+  // let userWithLists = dashboardTemplateWithName.replace(
+  // "#todoList#",
+  // createListsHtml(listTitles)
+  // );
+  sendResponse(res, dashboardTemplateWithName);
 };
 
 const handleValidUser = function(req, res, user, sendResponse) {

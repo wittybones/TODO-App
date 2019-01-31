@@ -159,7 +159,7 @@ const updateItems = function(req, res, user, sendResponse) {
   let { title, description } = user.getList(selectedList);
   let latestList = new List(title, description);
   itemAttributes.map(latestList.addItem.bind(latestList));
-  user.removeList(selectedList);
+  user.removeList(user.getList(selectedList));
   user.addList(latestList);
   user.writeUserDetailsToFile();
   res.end();

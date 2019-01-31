@@ -68,7 +68,7 @@ class User {
 
   removeList(list) {
     let listIndex = this.todoLists.findIndex(function(todolist) {
-      return todolist.title == list;
+      return JSON.stringify(todolist) == JSON.stringify(list);
     });
     this.todoLists.splice(listIndex, 1);
   }

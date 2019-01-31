@@ -1,5 +1,22 @@
 let itemNumber = 1;
 
+const rightHtml = `<div>
+<button class="addItemsBtn" onclick="addItems()">Save</button>
+</div>
+<div class="titleDiv">
+<label>Title:</label>
+<p class="listInputs" id="selectedTitle"></p>
+</div>
+<div class="descriptionDiv">
+<label>Description:</label>
+<p class="listInputs" id="description"></p>
+</div>
+<div class="itemsDiv">
+<label>Items:</label>
+<button class="addItemBtn" onclick="addItem()">Add Item</button>
+<div id="inputItems" class="inputItemsDiv"></div>
+</div>`;
+
 const getElement = (document, id) => document.getElementById(id);
 
 const deleteItem = function(context) {
@@ -139,6 +156,7 @@ const addItems = function() {
 const edit = function() {
   let rightDiv = getElement(document, "rightArea");
   rightDiv.style.pointerEvents = "initial";
+  document.getElementById("rightArea").innerHTML = rightHtml;
   let selectList = getElement(document, "selectedlist").value;
   fetch("/getSelectedList", { method: "POST", body: selectList })
     .then(response => response.json())
@@ -152,4 +170,12 @@ const deleteList = function() {
   );
 };
 
-window.onload = displayContent;
+const initialize = function() {
+  displayContent();
+  document.getElementById(
+    "rightArea"
+  ).innerHTML = `<img src="/media/todolist.jpg" height='600px' width='700px' style='
+  margin-left:50px;'>`;
+};
+
+window.onload = initialize;

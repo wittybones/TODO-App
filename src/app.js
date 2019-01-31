@@ -93,18 +93,23 @@ const validateUser = function(
 const handleUserLogin = function(req, res, next, sendResponse) {
   let currentUserInfo = parseUserInfo(req.body);
   if (isValidUserFile(currentUserInfo.userId)) {
-    fs.readFile(
+    let content = fs.readFileSync(
       `./private_data/${currentUserInfo.userId}.json`,
-      "utf8",
-      (err, content) => {
-        currentUserFile = JSON.parse(content);
-        validateUser(req, res, currentUserFile, currentUserInfo, sendResponse);
-      }
+      "utf8"
     );
+    // fs.readFile(
+    // `./private_data/${currentUserInfo.userId}.json`,
+    // "utf8",
+    // (err, content) => {
+    currentUserFile = JSON.parse(content);
+    validateUser(req, res, currentUserFile, currentUserInfo, sendResponse);
     return;
   }
+  // );
   invalidUserError(res, sendResponse);
+  // return;
 };
+// };
 
 const invalidUserError = function(res, sendResponse) {
   let loginTemplateWithErr = loginPageTemplate.replace(
@@ -116,6 +121,7 @@ const invalidUserError = function(res, sendResponse) {
 
 const renderLogout = function(req, res, next, sendResponse) {
   let userId = req.cookies.username;
+  console.log(currentUserFile);
   fs.writeFile(
     `./private_data/${userId}.json`,
     JSON.stringify(currentUserFile),
@@ -130,6 +136,7 @@ const renderLogout = function(req, res, next, sendResponse) {
 };
 
 const createUser = function(req, res, callback, sendResponse) {
+  console.log(currentUserFile);
   let { userId, password, todoLists } = currentUserFile;
   let user = new User(userId, password, todoLists);
   callback(req, res, user, sendResponse);

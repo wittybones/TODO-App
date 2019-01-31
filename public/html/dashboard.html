@@ -15,30 +15,39 @@
 
     <main>
       <div class="leftDiv">
-        <header class="addTodoHeader">Add TODO</header>
-        <div class="titleDiv">
-          <label>Title:</label
-          ><input class="listTitle" type="text" name="title" id="listTitle" />
+        <div style="border:2px solid black;height:325px;margin-bottom:20px;">
+          <header class="addTodoHeader">My TODOs</header>
+          <div style="display:flex;">
+            <div class="selectTodo">
+              <label class="selectLabel">Select:</label>
+              <select class="selectBox" name="selectedList" id="selectedlist">
+              </select>
+            </div>
+            <div class="modifyTodo">
+              <button onclick="edit()" class="editTodoBtn">Edit</button><br />
+              <button onclick="deleteList()" class="deleteTodoBtn">
+                Delete
+              </button>
+            </div>
+          </div>
         </div>
-        <div class="descriptionArea">
-          <label>Description:</label
-          ><textarea
-            class="listDescription"
-            name="description"
-            id="listDescription"
-            cols="30"
-            rows="3"
-          ></textarea>
-        </div>
-        <div><button onclick="addList()" class="addTodoBtn">Add</button></div>
-        <div class="selectTodo">
-          <label class="selectLabel">Select:</label>
-          <select class="selectBox" name="selectedList" id="selectedlist">
-          </select>
-        </div>
-        <div class="modifyTodo">
-          <button onclick="edit()" class="editTodoBtn">Edit</button>
-          <button onclick="deleteList()" class="deleteTodoBtn">Delete</button>
+        <div style="border:2px solid black;height:325px;">
+          <header class="addTodoHeader">Add</header>
+          <div class="titleDiv">
+            <label style="position:absolute;left:20px">Title:</label
+            ><input class="listTitle" type="text" name="title" id="listTitle" />
+          </div>
+          <div class="descriptionArea">
+            <label style="position:absolute;left:20px">Description:</label
+            ><textarea
+              class="listDescription"
+              name="description"
+              id="listDescription"
+              cols="30"
+              rows="3"
+            ></textarea>
+          </div>
+          <div><button onclick="addList()" class="addTodoBtn">Add</button></div>
         </div>
       </div>
       <div id="rightArea" class="rightDiv">
@@ -59,6 +68,7 @@
           <div id="inputItems" class="inputItemsDiv"></div>
         </div>
       </div>
+      <img src="" alt="" style="background-size:cover">
     </main>
   </body>
 </html>

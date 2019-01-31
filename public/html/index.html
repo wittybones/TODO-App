@@ -2,53 +2,24 @@
 <html>
   <head>
     <title>Welcome to my TODO</title>
+    <link rel="stylesheet" href="/stylesheet/index.css" />
   </head>
-  <style>
-    main {
-      text-align: center;
-      font-size: 25px;
-      background-color: #f1f8ff;
-    }
-    header {
-      font-size: 50px;
-      text-align: center;
-      color: black;
-      font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
-    }
-    body {
-      background-color: #a5a9d6;
-    }
-  </style>
   <body>
     <header>MY TODO</header>
-    <main
-      style="border:2px solid black; border-radius: 10px; width:400px;height:300px;margin-left:500px;margin-top:20px;
-      font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif"
-    >
-      <form method="POST" style="padding:40px" action="/login">
+    <main>
+      <form method="POST" class="inputForm" action="/login">
         <label>UserID : </label>
-        <input
-          type="text"
-          name="userId"
-          style="font-size:15px;font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif"
-          required
-        /><br />
+        <input class="userId" type="text" name="userId" required /><br />
         <label>Password : </label>
         <input
+          class="userInfo"
           type="password"
           name="password"
-          style="font-size:15px;font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif"
           required
         /><br />
-        <button
-          style="height:35px;width:70px;margin-top:10px;border-radius:3px;background-color:#A5A9D6;font-size:25px;font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif"
-        >
-          Login
-        </button>
+        <button class="loginBtn">Login</button>
       </form>
-      <div
-        style="font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif"
-      >
+      <div class="signUpLink">
         ----------OR---------- <br />
         Don't have an account? <a href="/html/signUp.html">SignUp!</a>
       </div>

@@ -1,18 +1,16 @@
 body {
-  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
 }
 .headerDiv {
   font-size: 50px;
   width: 100%;
   height: 70px;
-  background-color: #f1f8ff;
 }
 .logoutBtn {
   font-size: 25px;
   float: right;
   margin-top: -35px;
   margin-right: 10px;
-  background-color: #a5a9d6;
 }
 .leftDiv {
   margin-top: 20px;
@@ -20,8 +18,8 @@ body {
   width: 40%;
   height: 625px;
   padding-top: 50px;
-  background-color: #a5a9d6;
 }
+
 .addTodoHeader {
   font-size: 35px;
   text-align: center;
@@ -42,7 +40,6 @@ body {
   font-size: 25px;
   margin-top: 30px;
   margin-left: 220px;
-  background-color: #f1f8ff;
   border-radius: 5px;
 }
 
@@ -66,7 +63,6 @@ body {
   font-size: 25px;
   margin-top: 30px;
   margin-left: 150px;
-  background-color: #f1f8ff;
   border-radius: 5px;
 }
 
@@ -74,8 +70,6 @@ body {
   font-size: 25px;
   margin-top: 30px;
   margin-left: 20px;
-  background-color: #f1f8ff;
-  border-radius: 5px;
 }
 
 .rightDiv {
@@ -85,14 +79,12 @@ body {
   margin-left: 20px;
   height: 625px;
   padding-top: 50px;
-  background-color: #a5a9d6;
   pointer-events: none;
 }
 
 .addItemsBtn {
   font-size: 25px;
   margin-left: 650px;
-  background-color: #f1f8ff;
   border-radius: 5px;
 }
 
@@ -100,7 +92,6 @@ body {
   font-size: 25px;
   margin-top: 30px;
   margin-left: 20px;
-  background-color: #f1f8ff;
   border-radius: 5px;
 }
 

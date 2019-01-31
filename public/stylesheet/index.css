@@ -1,0 +1,46 @@
+main {
+  text-align: center;
+  font-size: 25px;
+  background-color: #f1f8ff;
+}
+header {
+  font-size: 50px;
+  text-align: center;
+  color: black;
+  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+}
+body {
+  background-color: #a5a9d6;
+}
+main {
+  border: 2px solid black;
+  border-radius: 10px;
+  width: 400px;
+  height: 300px;
+  margin-left: 500px;
+  margin-top: 20px;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
+.userInfo {
+  font-size: 15px;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
+.loginBtn {
+  height: 35px;
+  width: 70px;
+  margin-top: 10px;
+  border-radius: 3px;
+  background-color: #a5a9d6;
+  font-size: 25px;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
+.signUpLink {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
+.inputForm {
+  padding: 40px;
+}

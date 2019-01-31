@@ -28,10 +28,10 @@ main {
   margin-bottom: 20px;
 }
 
-.titleDiv {
+.titleDiv1 {
   font-size: 30px;
   margin-left: 10px;
-  padding: 10px;
+  padding-bottom: 10px;
 }
 .descriptionArea {
   font-size: 30px;
@@ -41,7 +41,7 @@ main {
 
 .addTodoBtn {
   font-size: 25px;
-  margin-top: 30px;
+  margin-top: 10px;
   margin-left: 220px;
   border-radius: 5px;
 }
@@ -85,14 +85,15 @@ main {
 
 .addItemsBtn {
   font-size: 25px;
-  margin-left: 650px;
+  margin-top: 420px;
+  /* margin-left: 650px; */
   border-radius: 5px;
 }
 
 .addItemBtn {
   font-size: 25px;
   margin-top: 30px;
-  margin-left: 20px;
+  /* margin-left: 20px; */
   border-radius: 5px;
 }
 
@@ -124,13 +125,14 @@ main {
 }
 
 .titleDiv {
-  font-size: 30px;
-  margin-left: 100px;
-  padding: 10px;
+  margin-top: -50px;
+  font-size: 80px;
+  text-align: center;
+  padding-bottom: 10px;
 }
 .descriptionDiv {
-  font-size: 30px;
-  margin-left: 110px;
+  font-size: 50px;
+  text-align: center;
 }
 .listInputs {
   display: inline;

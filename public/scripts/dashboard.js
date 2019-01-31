@@ -1,20 +1,21 @@
 let itemNumber = 1;
 
-const rightHtml = `<div>
-<button class="addItemsBtn" onclick="addItems()">Save</button>
-</div>
+const rightDivHtml = `
 <div class="titleDiv">
-<label>Title:</label>
 <p class="listInputs" id="selectedTitle"></p>
 </div>
 <div class="descriptionDiv">
-<label>Description:</label>
 <p class="listInputs" id="description"></p>
 </div>
 <div class="itemsDiv">
-<label>Items:</label>
+<label style='font-size:40px;margin-top:20px;'>Items:</label>
+<div style='display:flex'>
+<div id="inputItems" class="inputItemsDiv" style='height:370px;width:500px;'></div>
+<div style='height:370px,width:200px;'>
 <button class="addItemBtn" onclick="addItem()">Add Item</button>
-<div id="inputItems" class="inputItemsDiv"></div>
+<button class="addItemsBtn" onclick="addItems()">Save</button>
+</div>
+</div>
 </div>`;
 
 const getElement = (document, id) => document.getElementById(id);
@@ -91,7 +92,9 @@ const displayContent = function() {
 
 const addList = function() {
   let title = getElement(document, "listTitle").value;
+  getElement(document, "listTitle").value = "";
   let description = getElement(document, "listDescription").value;
+  getElement(document, "listDescription").value = "";
   fetch("/addList", {
     method: "POST",
     body: JSON.stringify({ title, description })
@@ -156,7 +159,7 @@ const addItems = function() {
 const edit = function() {
   let rightDiv = getElement(document, "rightArea");
   rightDiv.style.pointerEvents = "initial";
-  document.getElementById("rightArea").innerHTML = rightHtml;
+  document.getElementById("rightArea").innerHTML = rightDivHtml;
   let selectList = getElement(document, "selectedlist").value;
   fetch("/getSelectedList", { method: "POST", body: selectList })
     .then(response => response.json())

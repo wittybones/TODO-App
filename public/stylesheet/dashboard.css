@@ -1,5 +1,5 @@
 body {
-  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
+  font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 .headerDiv {
   font-size: 50px;
@@ -86,6 +86,7 @@ body {
   height: 625px;
   padding-top: 50px;
   background-color: #a5a9d6;
+  pointer-events: none;
 }
 
 .addItemsBtn {
@@ -101,4 +102,10 @@ body {
   margin-left: 20px;
   background-color: #f1f8ff;
   border-radius: 5px;
+}
+
+.inputItemsDiv {
+  padding-top: 50px;
+  height: 325px;
+  overflow: scroll;
 }

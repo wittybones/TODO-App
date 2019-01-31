@@ -22,7 +22,7 @@
             type="text"
             name="title"
             id="listTitle"
-            style="height:20px;width:200px"
+            style="height:20px;width:200px;font-size:18px;font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif"
           />
         </div>
         <div class="descriptionArea">
@@ -32,41 +32,38 @@
             id="listDescription"
             cols="30"
             rows="3"
+            style="font-size: 18px;font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif"
           ></textarea>
         </div>
-        <div>
-          <button onclick="addList()" class="addTodoBtn">Add TODO</button>
-        </div>
+        <div><button onclick="addList()" class="addTodoBtn">Add</button></div>
         <div class="selectTodo">
-          <label class="selectLabel">Select TODO:</label>
+          <label class="selectLabel">Select:</label>
           <select
             name="selectedList"
             id="selectedlist"
-            style="height:30px;width:200px"
+            style="height:30px;width:200px;font-size: 18px;font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif"
           >
           </select>
         </div>
         <div class="modifyTodo">
-          <button onclick="edit()" class="editTodoBtn">Edit TODO</button>
-          <button onclick="deleteList()" class="deleteTodoBtn">
-            Delete TODO
-          </button>
+          <button onclick="edit()" class="editTodoBtn">Edit</button>
+          <button onclick="deleteList()" class="deleteTodoBtn">Delete</button>
         </div>
       </div>
       <div id="rightArea" class="rightDiv">
         <div>
-          <button class="addItemsBtn" onclick="addItems()">Save TODO</button>
+          <button class="addItemsBtn" onclick="addItems()">Save</button>
         </div>
         <div style="font-size:30px;margin-left:100px;padding:10px;">
-          <label>TODO Title:</label>
+          <label>Title:</label>
           <p style="display: inline;" id="selectedTitle"></p>
         </div>
         <div style="font-size:30px;margin-left:110px;">
-          <label>TODO Description:</label>
+          <label>Description:</label>
           <p style="display: inline;" id="description"></p>
         </div>
         <div style="font-size:30px;margin-left:110px;">
-          <label>TODO Items:</label>
+          <label>Items:</label>
           <button class="addItemBtn" onclick="addItem()">Add Item</button>
           <div id="inputItems" class="inputItemsDiv"></div>
         </div>

@@ -7,13 +7,17 @@ const {
   readCookies,
   handleRequest
 } = require("./serverUtil");
-
-const { User, List, Item } = require("./user");
+let currentUserFile;
+const { User, List } = require("./user");
 
 const dashboardTemplate = fs.readFileSync(
   "./public/html/dashboard.html",
   "utf8"
 );
+
+const getUserFile = function(userId) {
+  return fs.readFileSync(`./private_data/${userId}.json`, "utf8");
+};
 
 const loginPageTemplate = fs.readFileSync("./public/html/index.html", "utf8");
 
@@ -75,7 +79,7 @@ const validateUser = function(
   currentUserInfo,
   sendResponse
 ) {
-  let { userId, password, todoLists } = JSON.parse(userFileContent);
+  let { userId, password, todoLists } = userFileContent;
   let user = new User(userId, password, todoLists);
   if (user.match(currentUserInfo.password)) {
     handleValidUser(req, res, user, sendResponse);
@@ -86,11 +90,9 @@ const validateUser = function(
 
 const handleUserLogin = function(req, res, next, sendResponse) {
   let currentUserInfo = parseUserInfo(req.body);
-  let currentUserFile = `./private_data/${currentUserInfo.userId}.json`;
+  currentUserFile = JSON.parse(getUserFile(currentUserInfo.userId));
   if (isValidUserFile(currentUserInfo.userId)) {
-    fs.readFile(currentUserFile, "utf8", function(err, content) {
-      validateUser(req, res, content, currentUserInfo, sendResponse);
-    });
+    validateUser(req, res, currentUserFile, currentUserInfo, sendResponse);
     return;
   }
   invalidUserError(res, sendResponse);
@@ -105,17 +107,17 @@ const invalidUserError = function(res, sendResponse) {
 };
 
 const renderLogout = function(req, res, next, sendResponse) {
+  let { userId, password, todoLists } = currentUserFile;
+  let user = new User(userId, password, todoLists);
+  user.writeUserDetailsToFile();
   res.setHeader("Set-Cookie", "username=; expires=" + new Date().toUTCString());
   redirectToLogin(res);
 };
 
 const createUser = function(req, res, callback, sendResponse) {
-  let userId = req.cookies.username;
-  fs.readFile(`./private_data/${userId}.json`, "utf8", function(err, content) {
-    let { userId, password, todoLists } = JSON.parse(content);
-    let user = new User(userId, password, todoLists);
-    callback(req, res, user, sendResponse);
-  });
+  let { userId, password, todoLists } = currentUserFile;
+  let user = new User(userId, password, todoLists);
+  callback(req, res, user, sendResponse);
 };
 
 const selectList = function(req, res, user, sendResponse) {
@@ -128,21 +130,18 @@ const getSelectedList = function(req, res, next, sendResponse) {
   createUser(req, res, selectList, sendResponse);
 };
 
-const addUserList = function(res, content, userList) {
-  let { userId, password, todoLists } = JSON.parse(content);
+const addUserList = function(res, currentUserFile, userList) {
+  let { userId, password, todoLists } = currentUserFile;
   let user = new User(userId, password, todoLists);
   let list = new List(userList.title, userList.description);
   user.addList(list);
-  user.writeUserDetailsToFile();
+  currentUserFile.todoLists = user.todoLists;
   res.end();
 };
 
 const addList = function(req, res, next, sendResponse) {
   let { title, description } = JSON.parse(req.body);
-  let userId = req.cookies.username;
-  fs.readFile(`./private_data/${userId}.json`, "utf8", function(err, content) {
-    addUserList(res, content, { title, description });
-  });
+  addUserList(res, currentUserFile, { title, description });
 };
 
 const getTitlesList = function(req, res, user, sendResponse) {
@@ -161,7 +160,7 @@ const updateItems = function(req, res, user, sendResponse) {
   itemAttributes.map(latestList.addItem.bind(latestList));
   user.removeList(user.getList(selectedList));
   user.addList(latestList);
-  user.writeUserDetailsToFile();
+  currentUserFile.todoLists = user.todoLists;
   res.end();
 };
 
@@ -173,7 +172,7 @@ const removeList = function(req, res, user, sendResponse) {
   let selectedTitle = req.body;
   let selectedList = user.getList(selectedTitle);
   user.removeList(selectedList);
-  user.writeUserDetailsToFile();
+  currentUserFile.todoLists = user.todoLists;
   res.end();
 };
 

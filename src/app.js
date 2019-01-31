@@ -15,10 +15,6 @@ const dashboardTemplate = fs.readFileSync(
   "utf8"
 );
 
-const getUserFile = function(userId) {
-  return fs.readFileSync(`./private_data/${userId}.json`, "utf8");
-};
-
 const loginPageTemplate = fs.readFileSync("./public/html/index.html", "utf8");
 
 const parseUserInfo = function(details) {
@@ -37,8 +33,14 @@ const redirectToLogin = function(res) {
 const handleSignup = function(req, res, next, sendResponse) {
   let { userId, password } = parseUserInfo(req.body);
   let user = new User(userId, password, []);
-  user.writeUserDetailsToFile();
-  redirectToLogin(res);
+  let userInfo = { userId, password, todoLists: user.todoLists };
+  fs.writeFile(
+    `./private_data/${userId}.json`,
+    JSON.stringify(userInfo),
+    () => {
+      redirectToLogin(res);
+    }
+  );
 };
 
 const checkUserCredentials = function(userInfo, currentUserInfo) {
@@ -90,9 +92,15 @@ const validateUser = function(
 
 const handleUserLogin = function(req, res, next, sendResponse) {
   let currentUserInfo = parseUserInfo(req.body);
-  currentUserFile = JSON.parse(getUserFile(currentUserInfo.userId));
   if (isValidUserFile(currentUserInfo.userId)) {
-    validateUser(req, res, currentUserFile, currentUserInfo, sendResponse);
+    fs.readFile(
+      `./private_data/${currentUserInfo.userId}.json`,
+      "utf8",
+      (err, content) => {
+        currentUserFile = JSON.parse(content);
+        validateUser(req, res, currentUserFile, currentUserInfo, sendResponse);
+      }
+    );
     return;
   }
   invalidUserError(res, sendResponse);
@@ -107,11 +115,18 @@ const invalidUserError = function(res, sendResponse) {
 };
 
 const renderLogout = function(req, res, next, sendResponse) {
-  let { userId, password, todoLists } = currentUserFile;
-  let user = new User(userId, password, todoLists);
-  user.writeUserDetailsToFile();
-  res.setHeader("Set-Cookie", "username=; expires=" + new Date().toUTCString());
-  redirectToLogin(res);
+  let userId = req.cookies.username;
+  fs.writeFile(
+    `./private_data/${userId}.json`,
+    JSON.stringify(currentUserFile),
+    () => {
+      res.setHeader(
+        "Set-Cookie",
+        "username=; expires=" + new Date().toUTCString()
+      );
+      redirectToLogin(res);
+    }
+  );
 };
 
 const createUser = function(req, res, callback, sendResponse) {

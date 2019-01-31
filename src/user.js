@@ -12,7 +12,6 @@ class User {
   constructor(userId, password, todoLists) {
     this.userId = userId;
     this.password = password;
-    this.file = `./private_data/${this.userId}.json`;
     this.todoLists = todoLists;
   }
   addList(list) {
@@ -20,24 +19,7 @@ class User {
   }
 
   match(password) {
-    return this.password == password;
-  }
-
-  writeToFile(data) {
-    fs.writeFileSync(this.file, JSON.stringify(data));
-  }
-
-  writeListsToFile() {
-    this.writeToFile(this.todoLists);
-  }
-
-  writeUserDetailsToFile() {
-    let userDetails = {
-      userId: this.userId,
-      password: this.password,
-      todoLists: this.todoLists
-    };
-    this.writeToFile(userDetails);
+    return this.password == password;     
   }
 
   parse(data) {

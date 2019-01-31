@@ -141,21 +141,15 @@ const edit = function() {
   rightDiv.style.pointerEvents = "initial";
   let selectList = getElement(document, "selectedlist").value;
   fetch("/getSelectedList", { method: "POST", body: selectList })
-    .then(function(response) {
-      return response.json();
-    })
-    .then(function(list) {
-      createListHtml(list);
-    });
+    .then(response => response.json())
+    .then(createListHtml);
 };
 
 const deleteList = function() {
   let selectList = getElement(document, "selectedlist").value;
-  fetch("/deleteList", { method: "POST", body: selectList }).then(function(
-    response
-  ) {
-    displayContent();
-  });
+  fetch("/deleteList", { method: "POST", body: selectList }).then(
+    displayContent
+  );
 };
 
 window.onload = displayContent;

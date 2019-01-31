@@ -13,36 +13,27 @@
       </form>
     </div>
 
-    <main style="display:flex">
+    <main>
       <div class="leftDiv">
         <header class="addTodoHeader">Add TODO</header>
         <div class="titleDiv">
           <label>Title:</label
-          ><input
-            type="text"
-            name="title"
-            id="listTitle"
-            style="height:20px;width:200px;font-size:18px;font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif"
-          />
+          ><input class="listTitle" type="text" name="title" id="listTitle" />
         </div>
         <div class="descriptionArea">
           <label>Description:</label
           ><textarea
+            class="listDescription"
             name="description"
             id="listDescription"
             cols="30"
             rows="3"
-            style="font-size: 18px;font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif"
           ></textarea>
         </div>
         <div><button onclick="addList()" class="addTodoBtn">Add</button></div>
         <div class="selectTodo">
           <label class="selectLabel">Select:</label>
-          <select
-            name="selectedList"
-            id="selectedlist"
-            style="height:30px;width:200px;font-size: 18px;font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif"
-          >
+          <select class="selectBox" name="selectedList" id="selectedlist">
           </select>
         </div>
         <div class="modifyTodo">
@@ -54,15 +45,15 @@
         <div>
           <button class="addItemsBtn" onclick="addItems()">Save</button>
         </div>
-        <div style="font-size:30px;margin-left:100px;padding:10px;">
+        <div class="titleDiv">
           <label>Title:</label>
-          <p style="display: inline;" id="selectedTitle"></p>
+          <p class="listInputs" id="selectedTitle"></p>
         </div>
-        <div style="font-size:30px;margin-left:110px;">
+        <div class="descriptionDiv">
           <label>Description:</label>
-          <p style="display: inline;" id="description"></p>
+          <p class="listInputs" id="description"></p>
         </div>
-        <div style="font-size:30px;margin-left:110px;">
+        <div class="itemsDiv">
           <label>Items:</label>
           <button class="addItemBtn" onclick="addItem()">Add Item</button>
           <div id="inputItems" class="inputItemsDiv"></div>

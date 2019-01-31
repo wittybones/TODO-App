@@ -1,6 +1,9 @@
 body {
   font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
 }
+main {
+  display: flex;
+}
 .headerDiv {
   font-size: 50px;
   width: 100%;
@@ -99,4 +102,40 @@ body {
   padding-top: 50px;
   height: 325px;
   overflow: scroll;
+}
+
+.listTitle {
+  height: 20px;
+  width: 200px;
+  font-size: 18px;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
+.listDescription {
+  font-size: 18px;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
+.selectBox {
+  height: 30px;
+  width: 200px;
+  font-size: 18px;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+}
+
+.titleDiv {
+  font-size: 30px;
+  margin-left: 100px;
+  padding: 10px;
+}
+.descriptionDiv {
+  font-size: 30px;
+  margin-left: 110px;
+}
+.listInputs {
+  display: inline;
+}
+.itemsDiv {
+  font-size: 30px;
+  margin-left: 110px;
 }

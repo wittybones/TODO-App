@@ -35,7 +35,7 @@ const handleSignup = function(req, res, next, sendResponse) {
   let user = new User(userId, password, []);
   let userInfo = { userId, password, todoLists: user.todoLists };
   fs.writeFile(
-    `./private_data/${userId}.json`,
+    `./private_data/${user.userId}.json`,
     JSON.stringify(userInfo),
     () => {
       redirectToLogin(res);
@@ -149,7 +149,7 @@ const addList = function(req, res, next, sendResponse) {
   user.addList(list);
   currentUserFile.todoLists = user.todoLists;
   fs.writeFile(
-    `./private_data/${userId}.json`,
+    `./private_data/${user.userId}.json`,
     JSON.stringify(currentUserFile),
     () => {
       res.end();
@@ -188,7 +188,7 @@ const deleteList = function(req, res, next, sendResponse) {
   user.removeList(selectedList);
   currentUserFile.todoLists = user.todoLists;
   fs.writeFile(
-    `./private_data/${userId}.json`,
+    `./private_data/${user.userId}.json`,
     JSON.stringify(currentUserFile),
     () => {
       res.end();

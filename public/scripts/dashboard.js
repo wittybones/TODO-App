@@ -2,20 +2,29 @@ let itemNumber = 1;
 
 const rightDivHtml = `
 <div style="background-color:#ffcc99">
-<div class="titleDiv">
-<p class="listInputs" id="selectedTitle"></p>
-</div>
-<div class="descriptionDiv">
-<p class="listInputs" id="description"></p>
-</div>
+<div class="titleDiv"><p class="listInputs" id="selectedTitle"></p></div>
+<div class="descriptionDiv"><p class="listInputs" id="description"></p></div>
 <div class="itemsDiv">
-<label style='font-size:40px;margin-top:20px;'>Items:</label>
-<div style='display:flex'>
-<div id="inputItems" class="inputItemsDiv" style='height:370px;width:500px;'></div>
-<div style='height:370px,width:200px;'>
-<button class="addItemBtn" onclick="addItem()">Add Item</button>
-<button class="addItemsBtn" onclick="addItems()">Save</button>
-</div>
+ <label style="font-size:40px;margin-top:20px;">Items:</label>
+ <div style="display: flex;height:100px">
+   <input
+     id="itemDetails"
+     type="text"
+     placeholder="Item description"
+     style="height:30px;width:400px;font-size: 30px"
+   />
+   <button style="height:35px;width:50px;font-size: 30px;" onclick="addItem()">+</button>
+ </div>
+ <div style="display:flex;height:370px;width:600px;">
+   <div
+     id="inputItems"
+     class="inputItemsDiv"
+     style="height:370px;width:500px;"
+   ></div>
+   <div>
+     <button class="addItemsBtn" onclick="addItems()">Save</button>
+   </div>
+ </div>
 </div>
 </div>`;
 
@@ -44,10 +53,12 @@ const createDeleteButtonDiv = function(itemNumber) {
 
 const createItemDiv = function(itemNumber) {
   let style = "height:20px;width:200px";
-  let itemDiv = document.createElement("INPUT");
-  itemDiv.setAttribute("type", "text");
+  let itemDiv = document.createElement("label");
+  // itemDiv.setAttribute("type", "text");
+  itemDiv.contentEditable = "true";
   itemDiv.id = "item_" + itemNumber;
-  itemDiv.setAttribute("name", "item" + itemNumber);
+  itemDiv.innerText = document.getElementById("itemDetails").value;
+  // itemDiv.setAttribute("name", "item" + itemNumber);
   itemDiv.setAttribute("style", style);
   itemDiv.className = "listsData";
   return itemDiv;
@@ -110,8 +121,8 @@ const createItemsHtml = function(item) {
     "font-size:20px;margin-left:10px;background-color:#F1F8FF;border-radius: 5px";
   let checkboxHtml = `<input type="checkbox" id='cb_${id}' class='checkBox' name='${id}' ${status} style='zoom:1.5'>`;
   let deleteButton = `<button style=${deleteButtonStyle} id='del_${id}' onclick='deleteItem(this)'>\uD83D\uDDD1</button>`;
-  let inputText = `<input type='text' value='${content}' class='listsData' id='item_${id}'>`;
-  return checkboxHtml + inputText + deleteButton + "<br/>";
+  let inputLabel = `<label class='listsData' id='item_${id}' contenteditable = 'true'>${content}</label>`;
+  return checkboxHtml + inputLabel + deleteButton + "<br/>";
 };
 
 const createListHtml = function(list) {
@@ -149,7 +160,7 @@ const addItems = function() {
   let checkStatus = Object.keys(checkValues).map(
     key => checkValues[key].checked
   );
-  let values = Object.keys(inputs).map(key => inputs[key].value);
+  let values = Object.keys(inputs).map(key => inputs[key].innerText);
   let itemAttributes = createItemAttributes(checkStatus, values);
   fetch("/addItems", {
     method: "POST",

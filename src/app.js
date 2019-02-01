@@ -97,19 +97,12 @@ const handleUserLogin = function(req, res, next, sendResponse) {
       `./private_data/${currentUserInfo.userId}.json`,
       "utf8"
     );
-    // fs.readFile(
-    // `./private_data/${currentUserInfo.userId}.json`,
-    // "utf8",
-    // (err, content) => {
     currentUserFile = JSON.parse(content);
     validateUser(req, res, currentUserFile, currentUserInfo, sendResponse);
     return;
   }
-  // );
   invalidUserError(res, sendResponse);
-  // return;
 };
-// };
 
 const invalidUserError = function(res, sendResponse) {
   let loginTemplateWithErr = loginPageTemplate.replace(
@@ -135,47 +128,43 @@ const renderLogout = function(req, res, next, sendResponse) {
   );
 };
 
-const createUser = function(req, res, callback, sendResponse) {
+const createUser = function(req, res, sendResponse) {
   console.log(currentUserFile);
   let { userId, password, todoLists } = currentUserFile;
   let user = new User(userId, password, todoLists);
-  callback(req, res, user, sendResponse);
+  return user;
 };
 
-const selectList = function(req, res, user, sendResponse) {
+const getSelectedList = function(req, res, next, sendResponse) {
+  let user = createUser(req, res, sendResponse);
   let list = req.body;
   let selectedList = user.getList(list);
   sendResponse(res, JSON.stringify(selectedList));
 };
 
-const getSelectedList = function(req, res, next, sendResponse) {
-  createUser(req, res, selectList, sendResponse);
-};
-
-const addUserList = function(res, currentUserFile, userList) {
-  let { userId, password, todoLists } = currentUserFile;
-  let user = new User(userId, password, todoLists);
-  let list = new List(userList.title, userList.description);
-  user.addList(list);
-  currentUserFile.todoLists = user.todoLists;
-  res.end();
-};
-
 const addList = function(req, res, next, sendResponse) {
   let { title, description } = JSON.parse(req.body);
-  addUserList(res, currentUserFile, { title, description });
+  let user = createUser(req, res, sendResponse);
+  let list = new List(title, description);
+  user.addList(list);
+  currentUserFile.todoLists = user.todoLists;
+  fs.writeFile(
+    `./private_data/${userId}.json`,
+    JSON.stringify(currentUserFile),
+    () => {
+      res.end();
+    }
+  );
 };
 
-const getTitlesList = function(req, res, user, sendResponse) {
+const loadJson = function(req, res, next, sendResponse) {
+  let user = createUser(req, res, sendResponse);
   let listTitles = user.getListTitles();
   sendResponse(res, JSON.stringify(listTitles));
 };
 
-const loadJson = function(req, res, next, sendResponse) {
-  createUser(req, res, getTitlesList, sendResponse);
-};
-
-const updateItems = function(req, res, user, sendResponse) {
+const addItems = function(req, res, next, sendResponse) {
+  let user = createUser(req, res, sendResponse);
   let { itemAttributes, selectedList } = JSON.parse(req.body);
   let { title, description } = user.getList(selectedList);
   let latestList = new List(title, description);
@@ -183,23 +172,38 @@ const updateItems = function(req, res, user, sendResponse) {
   user.removeList(user.getList(selectedList));
   user.addList(latestList);
   currentUserFile.todoLists = user.todoLists;
-  res.end();
+  fs.writeFile(
+    `./private_data/${user.userId}.json`,
+    JSON.stringify(currentUserFile),
+    () => {
+      res.end();
+    }
+  );
 };
 
-const addItems = function(req, res, next, sendResponse) {
-  createUser(req, res, updateItems, sendResponse);
-};
-
-const removeList = function(req, res, user, sendResponse) {
+const deleteList = function(req, res, next, sendResponse) {
+  let user = createUser(req, res, sendResponse);
   let selectedTitle = req.body;
   let selectedList = user.getList(selectedTitle);
   user.removeList(selectedList);
   currentUserFile.todoLists = user.todoLists;
-  res.end();
+  fs.writeFile(
+    `./private_data/${userId}.json`,
+    JSON.stringify(currentUserFile),
+    () => {
+      res.end();
+    }
+  );
 };
 
-const deleteList = function(req, res, next, sendResponse) {
-  createUser(req, res, removeList, sendResponse);
+const getRightDiv = function(req, res, next, sendResponse) {
+  fs.readFile("./public/html/dashboardRightDiv.html", "utf8", function(
+    err,
+    content
+  ) {
+    res.write(content);
+    res.end();
+  });
 };
 
 app.use(logRequest);
@@ -213,6 +217,7 @@ app.get("/displayList", loadJson);
 app.post("/getSelectedList", getSelectedList);
 app.post("/addItems", addItems);
 app.post("/deleteList", deleteList);
+app.get("/getRightDiv", getRightDiv);
 app.use(handleRequest);
 
 module.exports = {

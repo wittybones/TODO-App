@@ -1,6 +1,7 @@
 let itemNumber = 1;
 
 const rightDivHtml = `
+<div style="background-color:#ffcc99">
 <div class="titleDiv">
 <p class="listInputs" id="selectedTitle"></p>
 </div>
@@ -35,7 +36,7 @@ const createDeleteButtonDiv = function(itemNumber) {
     "font-size:20px;margin-left:10px;background-color:#F1F8FF;border-radius: 5px";
   let deleteButton = document.createElement("button");
   deleteButton.setAttribute("style", style);
-  deleteButton.innerText = "Delete";
+  deleteButton.innerText = "\uD83D\uDDD1";
   deleteButton.id = "del_" + itemNumber;
   deleteButton.setAttribute("onclick", `deleteItem({id:'del_${itemNumber}'});`);
   return deleteButton;
@@ -69,7 +70,7 @@ const addItem = function() {
   let deleteButton = createDeleteButtonDiv(itemNumber);
   let itemDiv = createItemDiv(itemNumber);
   let checkboxDiv = createCheckboxDiv(itemNumber);
-  appendChildren(itemsDiv, [deleteButton, checkboxDiv, itemDiv]);
+  appendChildren(itemsDiv, [checkboxDiv, itemDiv, deleteButton]);
   let br = document.createElement("br");
   itemsDiv.appendChild(br);
   itemNumber++;
@@ -108,9 +109,9 @@ const createItemsHtml = function(item) {
   let deleteButtonStyle =
     "font-size:20px;margin-left:10px;background-color:#F1F8FF;border-radius: 5px";
   let checkboxHtml = `<input type="checkbox" id='cb_${id}' class='checkBox' name='${id}' ${status} style='zoom:1.5'>`;
-  let deleteButton = `<button style=${deleteButtonStyle} id='del_${id}' onclick='deleteItem(this)'>Delete</button>`;
-  let inputText = `<input type='text' value='${content}' class='listsData' id='item_${id}' style='height:20px;width:200px'><br />`;
-  return deleteButton + checkboxHtml + inputText;
+  let deleteButton = `<button style=${deleteButtonStyle} id='del_${id}' onclick='deleteItem(this)'>\uD83D\uDDD1</button>`;
+  let inputText = `<input type='text' value='${content}' class='listsData' id='item_${id}'>`;
+  return checkboxHtml + inputText + deleteButton + "<br/>";
 };
 
 const createListHtml = function(list) {
@@ -156,7 +157,14 @@ const addItems = function() {
   });
 };
 
+const getRightDivHtml = function() {
+  fetch("/getRightDiv")
+    .then(response => response.text())
+    .then(response => (getElement(document, "rightArea").innerHTML = response));
+};
+
 const edit = function() {
+  // getRightDivHtml();
   let rightDiv = getElement(document, "rightArea");
   rightDiv.style.pointerEvents = "initial";
   document.getElementById("rightArea").innerHTML = rightDivHtml;

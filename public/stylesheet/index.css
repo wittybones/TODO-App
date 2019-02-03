@@ -1,46 +1,93 @@
-main {
-  text-align: center;
-  font-size: 25px;
-  background-color: #f1f8ff;
-}
-header {
-  font-size: 50px;
-  text-align: center;
-  color: black;
-  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
-}
+html,
 body {
-  background-color: #a5a9d6;
+  height: 100%;
+  width: 100%;
+  margin: 0px;
 }
+
 main {
-  border: 2px solid black;
-  border-radius: 10px;
-  width: 400px;
-  height: 300px;
-  margin-left: 500px;
-  margin-top: 20px;
-  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  font-family: "Open Sans", sans-serif;
+  height: 100%;
+  width: 100%;
 }
 
-.userInfo {
-  font-size: 15px;
-  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
-}
+header {
+  height: 10%;
+  width: 100%;
 
-.loginBtn {
-  height: 35px;
-  width: 70px;
-  margin-top: 10px;
-  border-radius: 3px;
-  background-color: #a5a9d6;
+  line-height: 3;
+  margin-left: 10px;
+  border-bottom: 1px solid black;
   font-size: 25px;
-  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
 }
 
-.signUpLink {
-  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+section {
+  height: 90%;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
-.inputForm {
-  padding: 40px;
+.loginBox {
+  height: 500px;
+  width: 450px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid skyblue;
+  border-radius: 20px;
+  box-shadow: 0px 2px 31px -1px rgba(0, 0, 0, 0.75);
+}
+
+form {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+h1 {
+  font-size: 45px;
+  font-family: inherit;
+}
+
+.textbox {
+  font-family: inherit;
+  font-weight: inherit;
+  text-align: center;
+  font-size: 25px;
+  width: 90%;
+  margin: 25px 0;
+  border: none;
+  border-bottom: 1px solid skyblue;
+}
+
+.textbox:focus {
+  outline: none;
+}
+
+.button {
+  font-family: inherit;
+  font-weight: inherit;
+  width: 70%;
+  height: 45px;
+  font-size: 25px;
+  border-radius: 20px;
+  margin-top: 40px;
+  background-color: #0088cc;
+  color: white;
+}
+
+.link {
+  font-size: 25px;
+  margin-bottom: 20px;
+}
+
+.button:focus {
+  outline: none;
 }

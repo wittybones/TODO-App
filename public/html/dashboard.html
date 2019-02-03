@@ -1,56 +1,91 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>My TODO</title>
-    <link rel="stylesheet" href="/stylesheet/dashboard.css" />
+    <title>Page Title</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      media="screen"
+      href="/stylesheet/userProfile.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300"
+      rel="stylesheet"
+    />
     <script src="/scripts/dashboard.js"></script>
   </head>
   <body>
-    <div class="headerDiv">
-      Welcome #userId# !
-      <form action="/logout" method="POST">
-        <button class="logoutBtn">Logout</button>
-      </form>
-    </div>
-
     <main>
-      <div class="leftDiv">
-        <div style="border:2px solid black;height:325px;margin-bottom:20px;">
-          <header class="addTodoHeader">My TODOs</header>
-          <div style="display:flex;">
-            <div class="selectTodo">
-              <label class="selectLabel">Select:</label>
-              <select class="selectBox" name="selectedList" id="selectedlist">
-              </select>
-            </div>
-            <div class="modifyTodo">
-              <button onclick="edit()" class="editTodoBtn">Edit</button><br />
-              <button onclick="deleteList()" class="deleteTodoBtn">
-                Delete
-              </button>
-            </div>
-          </div>
+      <header>
+        <div class="headerDiv">My TODO</div>
+        <div class="headerDiv">
+          #userId#
+          <form action="/logout" method="POST">
+            <button class="button">Logout</button>
+          </form>
         </div>
-        <div style="border:2px solid black;height:325px;">
-          <header class="addTodoHeader">Add</header>
-          <div class="titleDiv1">
-            <label style="position:absolute;left:20px">Title:</label
-            ><input class="listTitle" type="text" name="title" id="listTitle" />
+      </header>
+      <section class="mainSection">
+        <section class="leftSection">
+          <div class="todos">
+            <header class="sub-header">TODOs</header>
+            <select
+              name="selectbox"
+              class="select-box"
+              id="selectedlist"
+            ></select>
+            <div class="todo-btns">
+              <button class="button" onclick="edit()">Edit</button>
+              <button class="button" onclick="deleteList()">Delete</button>
+            </div>
           </div>
-          <div class="descriptionArea">
-            <label style="position:absolute;left:20px">Description:</label
-            ><textarea
-              class="listDescription"
-              name="description"
-              id="listDescription"
-              cols="30"
-              rows="3"
-            ></textarea>
+          <div class="add-todo">
+            <header class="sub-header">Add</header>
+            <div class="add-div">
+              <input
+                type="text"
+                placeholder="Todo title"
+                class="textbox"
+                name="title"
+                id="listTitle"
+              />
+              <input
+                type="text"
+                placeholder="Todo description"
+                class="textbox"
+                name="description"
+                id="listDescription"
+              />
+              <button class="add-button" onclick="addList()">Add</button>
+            </div>
           </div>
-          <div><button onclick="addList()" class="addTodoBtn">Add</button></div>
-        </div>
-      </div>
-      <div id="rightArea" class="rightDiv"></div>
+        </section>
+        <section class="rightSection" id="rightArea">
+          <div class="todo-info">
+            <div class="todo-title" id="selectedTitle"></div>
+            <div class="todo-description" id="description"></div>
+            <div class="new-item">
+              <input
+                type="text"
+                placeholder="add item"
+                class="item-textbox"
+                id="itemDetails"
+              />
+              <button class="add-item-btn" onclick="addItem()">Add item</button>
+            </div>
+          </div>
+          <div class="edit-todo">
+            <div class="add-item" id="inputItems">
+              <!-- <input type="checkbox" class="checkbox" /> -->
+              <!-- <label class="item-label">item one two</label> -->
+              <!-- <button class="delete-btn">Delete</button> -->
+            </div>
+            <div class="save-button-div">
+              <button class="save-btn" onclick="addItems()">Save</button>
+            </div>
+          </div>
+        </section>
+      </section>
     </main>
   </body>
 </html>

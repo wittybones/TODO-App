@@ -1,33 +1,5 @@
 let itemNumber = 1;
 
-const rightDivHtml = `
-<div style="background-color:#ffcc99">
-<div class="titleDiv"><p class="listInputs" id="selectedTitle"></p></div>
-<div class="descriptionDiv"><p class="listInputs" id="description"></p></div>
-<div class="itemsDiv">
- <label style="font-size:40px;margin-top:20px;">Items:</label>
- <div style="display: flex;height:100px">
-   <input
-     id="itemDetails"
-     type="text"
-     placeholder="Item description"
-     style="height:30px;width:400px;font-size: 30px"
-   />
-   <button style="height:35px;width:50px;font-size: 30px;" onclick="addItem()">+</button>
- </div>
- <div style="display:flex;height:370px;width:600px;">
-   <div
-     id="inputItems"
-     class="inputItemsDiv"
-     style="height:370px;width:500px;"
-   ></div>
-   <div>
-     <button class="addItemsBtn" onclick="addItems()">Save</button>
-   </div>
- </div>
-</div>
-</div>`;
-
 const getElement = (document, id) => document.getElementById(id);
 
 const deleteItem = function(context) {
@@ -54,11 +26,10 @@ const createDeleteButtonDiv = function(itemNumber) {
 const createItemDiv = function(itemNumber) {
   let style = "height:20px;width:200px";
   let itemDiv = document.createElement("label");
-  // itemDiv.setAttribute("type", "text");
   itemDiv.contentEditable = "true";
   itemDiv.id = "item_" + itemNumber;
   itemDiv.innerText = document.getElementById("itemDetails").value;
-  // itemDiv.setAttribute("name", "item" + itemNumber);
+  document.getElementById("itemDetails").value = "";
   itemDiv.setAttribute("style", style);
   itemDiv.className = "listsData";
   return itemDiv;
@@ -77,6 +48,9 @@ const appendChildren = (parent, children) =>
   children.map(child => parent.appendChild(child));
 
 const addItem = function() {
+  if (!document.getElementById("itemDetails").value) {
+    return;
+  }
   let itemsDiv = getElement(document, "inputItems");
   let deleteButton = createDeleteButtonDiv(itemNumber);
   let itemDiv = createItemDiv(itemNumber);
@@ -175,10 +149,8 @@ const getRightDivHtml = function() {
 };
 
 const edit = function() {
-  // getRightDivHtml();
   let rightDiv = getElement(document, "rightArea");
   rightDiv.style.pointerEvents = "initial";
-  document.getElementById("rightArea").innerHTML = rightDivHtml;
   let selectList = getElement(document, "selectedlist").value;
   fetch("/getSelectedList", { method: "POST", body: selectList })
     .then(response => response.json())
@@ -194,10 +166,6 @@ const deleteList = function() {
 
 const initialize = function() {
   displayContent();
-  document.getElementById(
-    "rightArea"
-  ).innerHTML = `<img src="/media/todolist.jpg" height='600px' width='700px' style='
-  margin-left:50px;'>`;
 };
 
 window.onload = initialize;

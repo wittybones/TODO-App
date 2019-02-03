@@ -1,20 +1,44 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Sign Up</title>
-    <link rel="stylesheet" href="/stylesheet/signUp.css" />
+    <title>Page Title</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      media="screen"
+      href="../stylesheet/index.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <header>Sign Up</header>
     <main>
-      <form action="/html/signup" class="inputForm" method="POST">
-        <label>UserId : </label>
-        <input type="text" name="userId" class="userId" required /> <br />
-        <label>Password:</label>
-        <input class="password" type="password" name="password" required />
-        <br />
-        <button class="signUpBtn">SignUp</button>
-      </form>
+      <header>My TODO</header>
+      <section>
+        <div class="loginBox">
+          <h1>Sign Up</h1>
+          <form action="/html/signup" class="inputForm" method="POST">
+            <input
+              type="text"
+              placeholder="username"
+              class="textbox"
+              name="userId"
+              required
+            />
+            <input
+              type="password"
+              placeholder="password"
+              class="textbox"
+              name="password"
+              required
+            />
+            <button class="button">SignUp</button>
+          </form>
+          <a href="/html/index.html" class="link">Back to Login</a>
+        </div>
+      </section>
     </main>
   </body>
 </html>

@@ -1,29 +1,44 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Welcome to my TODO</title>
-    <link rel="stylesheet" href="/stylesheet/index.css" />
+    <title>Page Title</title>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      media="screen"
+      href="../stylesheet/index.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans:300"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <header>MY TODO</header>
     <main>
-      <form method="POST" class="inputForm" action="/login">
-        <label>UserID : </label>
-        <input class="userId" type="text" name="userId" required /><br />
-        <label>Password : </label>
-        <input
-          class="userInfo"
-          type="password"
-          name="password"
-          required
-        /><br />
-        <button class="loginBtn">Login</button>
-      </form>
-      <div class="signUpLink">
-        ----------OR---------- <br />
-        Don't have an account? <a href="/html/signUp.html">SignUp!</a>
-      </div>
-      <div>______</div>
+      <header>My TODO</header>
+      <section>
+        <div class="loginBox">
+          <h1>Login</h1>
+          <form method="POST" class="inputForm" action="/login">
+            <input
+              type="text"
+              placeholder="username"
+              class="textbox"
+              name="userId"
+              required
+            />
+            <input
+              type="password"
+              placeholder="password"
+              class="textbox"
+              name="password"
+              required
+            />
+            <button class="button">Login</button>
+          </form>
+          <a href="/html/signUp.html" class="link">create an account</a>
+        </div>
+      </section>
     </main>
   </body>
 </html>

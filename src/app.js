@@ -2,12 +2,7 @@ const express = require('express');
 const app = express();
 const fs = require('fs');
 const { User, List } = require('./user');
-const {
-  readBody,
-  readCookies,
-  logRequest,
-  handleRequest
-} = require('./serverUtil');
+const { readBody, readCookies, logRequest } = require('./serverUtil');
 let currentUserFile;
 
 const dashboardTemplate = fs.readFileSync(
@@ -131,14 +126,14 @@ const renderLogout = function(req, res) {
   );
 };
 
-const createUser = function(req, res) {
+const createUser = function() {
   let { userId, password, todoLists } = currentUserFile;
   let user = new User(userId, password, todoLists);
   return user;
 };
 
 const getSelectedList = function(req, res) {
-  let user = createUser(req, res);
+  let user = createUser();
   let list = req.body;
   let selectedList = user.getList(list);
   res.send(JSON.stringify(selectedList));
@@ -154,14 +149,14 @@ const addList = function(req, res) {
 };
 
 const loadJson = function(req, res) {
-  let user = createUser(req, res);
+  let user = createUser();
   let listTitles = user.getListTitles();
   res.write(JSON.stringify(listTitles));
   res.end();
 };
 
 const addItems = function(req, res) {
-  let user = createUser(req, res);
+  let user = createUser();
   let { itemAttributes, selectedList } = JSON.parse(req.body);
   let { title, description } = user.getList(selectedList);
   let latestList = new List(title, description);
@@ -173,7 +168,7 @@ const addItems = function(req, res) {
 };
 
 const deleteList = function(req, res) {
-  let user = createUser(req, res);
+  let user = createUser();
   let selectedTitle = req.body;
   let selectedList = user.getList(selectedTitle);
   user.removeList(selectedList);
@@ -186,17 +181,18 @@ app.use(readCookies);
 app.use(readBody);
 app.post('/login', handleUserLogin);
 app.post('/addList', addList);
-app.post('/html/signup', handleSignup);
+app.post('/signup', handleSignup);
 app.post('/logout', renderLogout);
 app.get('/displayList', loadJson);
 app.post('/getSelectedList', getSelectedList);
 app.post('/addItems', addItems);
 app.post('/deleteList', deleteList);
-app.use(handleRequest);
+app.use(express.static('public/html'));
+app.use(express.static('public/stylesheet'));
+app.use(express.static('public/scripts'));
 
 module.exports = {
   app,
-  handleRequest,
   parseUserInfo,
   readBody,
   checkUserCredentials,

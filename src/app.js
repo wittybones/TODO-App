@@ -1,21 +1,31 @@
-const { App } = require("./frameWork.js");
-const fs = require("fs");
-const app = new App();
+const express = require('express');
+const app = express();
+const fs = require('fs');
+const { User, List } = require('./user');
 const {
   readBody,
-  logRequest,
   readCookies,
+  logRequest,
   handleRequest
-} = require("./serverUtil");
+} = require('./serverUtil');
 let currentUserFile;
-const { User, List } = require("./user");
 
 const dashboardTemplate = fs.readFileSync(
-  "./public/html/dashboard.html",
-  "utf8"
+  './public/html/dashboard.html',
+  'utf8'
 );
 
-const loginPageTemplate = fs.readFileSync("./public/html/index.html", "utf8");
+const writeToUserFile = function(res, userId) {
+  fs.writeFile(
+    `./private_data/${userId}.json`,
+    JSON.stringify(currentUserFile),
+    () => {
+      res.end();
+    }
+  );
+};
+
+const loginPageTemplate = fs.readFileSync('./public/html/index.html', 'utf8');
 
 const parseUserInfo = function(details) {
   let userId = details.split(/&|=/)[1];
@@ -25,12 +35,12 @@ const parseUserInfo = function(details) {
 
 const redirectToLogin = function(res) {
   res.writeHead(302, {
-    Location: "/html/index.html"
+    Location: '/html/index.html'
   });
   res.end();
 };
 
-const handleSignup = function(req, res, next, sendResponse) {
+const handleSignup = function(req, res) {
   let { userId, password } = parseUserInfo(req.body);
   let user = new User(userId, password, []);
   let userInfo = { userId, password, todoLists: user.todoLists };
@@ -51,120 +61,107 @@ const checkUserCredentials = function(userInfo, currentUserInfo) {
 
 const setCookies = function(req, res, user) {
   if (!req.headers.cookie) {
-    res.setHeader("Set-Cookie", "username=" + user.userId);
+    res.setHeader('Set-Cookie', 'username=' + user.userId);
   }
 };
 
 const isValidUserFile = function(userId) {
-  let userFiles = fs.readdirSync("./private_data");
+  let userFiles = fs.readdirSync('./private_data');
   return userFiles.includes(`${userId}.json`);
 };
 
-const redirectToDashboard = function(res, sendResponse, user) {
+const redirectToDashboard = function(res, user) {
   let dashboardTemplateWithName = dashboardTemplate.replace(
-    "#userId#",
+    '#userId#',
     user.userId
   );
-  sendResponse(res, dashboardTemplateWithName);
+  res.send(dashboardTemplateWithName);
 };
 
-const handleValidUser = function(req, res, user, sendResponse) {
+const handleValidUser = function(req, res, user) {
   setCookies(req, res, user);
-  redirectToDashboard(res, sendResponse, user);
+  redirectToDashboard(res, user);
   return;
 };
 
-const validateUser = function(
-  req,
-  res,
-  userFileContent,
-  currentUserInfo,
-  sendResponse
-) {
+const validateUser = function(req, res, userFileContent, currentUserInfo) {
   let { userId, password, todoLists } = userFileContent;
   let user = new User(userId, password, todoLists);
   if (user.match(currentUserInfo.password)) {
-    handleValidUser(req, res, user, sendResponse);
+    handleValidUser(req, res, user);
     return;
   }
-  invalidUserError(res, sendResponse);
+  invalidUserError(res);
 };
 
-const handleUserLogin = function(req, res, next, sendResponse) {
+const handleUserLogin = function(req, res) {
   let currentUserInfo = parseUserInfo(req.body);
   if (isValidUserFile(currentUserInfo.userId)) {
     let content = fs.readFileSync(
       `./private_data/${currentUserInfo.userId}.json`,
-      "utf8"
+      'utf8'
     );
     currentUserFile = JSON.parse(content);
-    validateUser(req, res, currentUserFile, currentUserInfo, sendResponse);
+    validateUser(req, res, currentUserFile, currentUserInfo);
     return;
   }
-  invalidUserError(res, sendResponse);
+  invalidUserError(res);
 };
 
-const invalidUserError = function(res, sendResponse) {
+const invalidUserError = function(res) {
   let loginTemplateWithErr = loginPageTemplate.replace(
-    "______",
-    "login failed"
+    '______',
+    'login failed'
   );
-  sendResponse(res, loginTemplateWithErr);
+  res.send(loginTemplateWithErr);
 };
 
-const renderLogout = function(req, res, next, sendResponse) {
+const renderLogout = function(req, res) {
   let userId = req.cookies.username;
-  console.log(currentUserFile);
   fs.writeFile(
     `./private_data/${userId}.json`,
     JSON.stringify(currentUserFile),
     () => {
       res.setHeader(
-        "Set-Cookie",
-        "username=; expires=" + new Date().toUTCString()
+        'Set-Cookie',
+        'username=; expires=' + new Date().toUTCString()
       );
       redirectToLogin(res);
     }
   );
 };
 
-const createUser = function(req, res, sendResponse) {
-  console.log(currentUserFile);
+const createUser = function(req, res) {
   let { userId, password, todoLists } = currentUserFile;
   let user = new User(userId, password, todoLists);
   return user;
 };
 
-const getSelectedList = function(req, res, next, sendResponse) {
-  let user = createUser(req, res, sendResponse);
+const getSelectedList = function(req, res) {
+  let user = createUser(req, res);
   let list = req.body;
   let selectedList = user.getList(list);
-  sendResponse(res, JSON.stringify(selectedList));
+  res.send(JSON.stringify(selectedList));
 };
 
-const addList = function(req, res, next, sendResponse) {
+const addList = function(req, res) {
   let { title, description } = JSON.parse(req.body);
-  let user = createUser(req, res, sendResponse);
+  let user = createUser(req, res);
   let list = new List(title, description);
   user.addList(list);
   currentUserFile.todoLists = user.todoLists;
-  fs.writeFile(
-    `./private_data/${user.userId}.json`,
-    JSON.stringify(currentUserFile),
-    () => {
-      res.end();
-    }
-  );
+  writeToUserFile(res, user.userId);
 };
 
-const loadJson = function(req, res, next, sendResponse) {
-  let user = createUser(req, res, sendResponse);
+const loadJson = function(req, res) {
+  let user = createUser(req, res);
   let listTitles = user.getListTitles();
-  sendResponse(res, JSON.stringify(listTitles));
+  res.write(JSON.stringify(listTitles));
+  res.end();
 };
 
-const addItems = function(req, res, next, sendResponse) {
-  let user = createUser(req, res, sendResponse);
+const addItems = function(req, res) {
+  let user = createUser(req, res);
   let { itemAttributes, selectedList } = JSON.parse(req.body);
   let { title, description } = user.getList(selectedList);
   let latestList = new List(title, description);
@@ -172,56 +169,33 @@ const addItems = function(req, res, next, sendResponse) {
   user.removeList(user.getList(selectedList));
   user.addList(latestList);
   currentUserFile.todoLists = user.todoLists;
-  fs.writeFile(
-    `./private_data/${user.userId}.json`,
-    JSON.stringify(currentUserFile),
-    () => {
-      res.end();
-    }
-  );
+  writeToUserFile(res, user.userId);
 };
 
-const deleteList = function(req, res, next, sendResponse) {
-  let user = createUser(req, res, sendResponse);
+const deleteList = function(req, res) {
+  let user = createUser(req, res);
   let selectedTitle = req.body;
   let selectedList = user.getList(selectedTitle);
   user.removeList(selectedList);
   currentUserFile.todoLists = user.todoLists;
-  fs.writeFile(
-    `./private_data/${user.userId}.json`,
-    JSON.stringify(currentUserFile),
-    () => {
-      res.end();
-    }
-  );
-};
-
-const getRightDiv = function(req, res, next, sendResponse) {
-  fs.readFile("./public/html/dashboardRightDiv.html", "utf8", function(
-    err,
-    content
-  ) {
-    res.write(content);
-    res.end();
-  });
+  writeToUserFile(res, user.userId);
 };
 
 app.use(logRequest);
 app.use(readCookies);
 app.use(readBody);
-app.post("/login", handleUserLogin);
-app.post("/addList", addList);
-app.post("/html/signup", handleSignup);
-app.post("/logout", renderLogout);
-app.get("/displayList", loadJson);
-app.post("/getSelectedList", getSelectedList);
-app.post("/addItems", addItems);
-app.post("/deleteList", deleteList);
-app.get("/getRightDiv", getRightDiv);
+app.post('/login', handleUserLogin);
+app.post('/addList', addList);
+app.post('/html/signup', handleSignup);
+app.post('/logout', renderLogout);
+app.get('/displayList', loadJson);
+app.post('/getSelectedList', getSelectedList);
+app.post('/addItems', addItems);
+app.post('/deleteList', deleteList);
 app.use(handleRequest);
 
 module.exports = {
-  app: app.handler.bind(app),
+  app,
   handleRequest,
   parseUserInfo,
   readBody,

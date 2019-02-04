@@ -175,7 +175,7 @@ app.use(express.static("public/stylesheet"));
 app.use(express.static("public/scripts"));
 app.post("/login", handleUserLogin);
 app.post("/addList", addList);
-app.post("/html/signUp", handleSignup);
+app.post("/signup", handleSignup);
 app.post("/logout", renderLogout);
 app.get("/displayList", loadJson);
 app.post("/getSelectedList", getSelectedList);

@@ -1,16 +1,15 @@
-const express = require("express");
+const express = require('express');
 const app = express();
-const fs = require("fs");
-const { User, List } = require("./user");
-const { readBody, readCookies, logRequest } = require("./serverUtil");
+const fs = require('fs');
+const { User, List } = require('./user');
+const { readBody, readCookies, logRequest } = require('./serverUtil');
 
 let currentUserFile;
 
 const dashboardTemplate = fs.readFileSync(
-  "./public/html/dashboard.html",
-  "utf8"
+  './public/html/dashboard.html',
+  'utf8'
 );
-const loginPageTemplate = fs.readFileSync("./public/html/index.html", "utf8");
 
 const writeToUserFile = function(res, userId) {
   fs.writeFile(
@@ -29,7 +28,7 @@ const parseUserInfo = function(details) {
 };
 
 const redirectToLogin = function(res) {
-  res.redirect("/index.html");
+  res.redirect('/index.html');
 };
 
 const handleSignup = function(req, res) {
@@ -53,18 +52,18 @@ const checkUserCredentials = function(userInfo, currentUserInfo) {
 
 const setCookies = function(req, res, user) {
   if (!req.headers.cookie) {
-    res.setHeader("Set-Cookie", "username=" + user.userId);
+    res.setHeader('Set-Cookie', 'username=' + user.userId);
   }
 };
 
 const isValidUserFile = function(userId) {
-  let userFiles = fs.readdirSync("./private_data");
+  let userFiles = fs.readdirSync('./private_data');
   return userFiles.includes(`${userId}.json`);
 };
 
 const redirectToDashboard = function(res, user) {
   let dashboardTemplateWithName = dashboardTemplate.replace(
-    "#userId#",
+    '#userId#',
     user.userId
   );
   res.send(dashboardTemplateWithName);
@@ -83,11 +82,11 @@ const validateUser = function(req, res, userFileContent, currentUserInfo) {
     handleValidUser(req, res, user);
     return;
   }
-  invalidUserError(res);
+  res.end();
 };
 
 const getUserFile = function(userId) {
-  let content = fs.readFileSync(`./private_data/${userId}.json`, "utf8");
+  let content = fs.readFileSync(`./private_data/${userId}.json`, 'utf8');
   currentUserFile = JSON.parse(content);
 };
 
@@ -109,8 +108,8 @@ const renderLogout = function(req, res) {
     JSON.stringify(currentUserFile),
     () => {
       res.setHeader(
-        "Set-Cookie",
-        "username=; expires=" + new Date().toUTCString()
+        'Set-Cookie',
+        'username=; expires=' + new Date().toUTCString()
       );
       redirectToLogin(res);
     }
@@ -167,20 +166,32 @@ const deleteList = function(req, res) {
   writeToUserFile(res, user.userId);
 };
 
+const initialPageHandler = function(req, res) {
+  if (req.headers['cookie']) {
+    let userId = req.headers['cookie'].split('=')[1];
+    getUserFile(userId);
+    let user = createUser();
+    redirectToDashboard(res, user);
+    return;
+  }
+  redirectToLogin(res);
+};
+
 app.use(logRequest);
 app.use(readCookies);
 app.use(readBody);
-app.use(express.static("public/html"));
-app.use(express.static("public/stylesheet"));
-app.use(express.static("public/scripts"));
-app.post("/login", handleUserLogin);
-app.post("/addList", addList);
-app.post("/signup", handleSignup);
-app.post("/logout", renderLogout);
-app.get("/displayList", loadJson);
-app.post("/getSelectedList", getSelectedList);
-app.post("/addItems", addItems);
-app.post("/deleteList", deleteList);
+app.get('/', initialPageHandler);
+app.use(express.static('public/html'));
+app.use(express.static('public/stylesheet'));
+app.use(express.static('public/scripts'));
+app.post('/login', handleUserLogin);
+app.post('/addList', addList);
+app.post('/signup', handleSignup);
+app.post('/logout', renderLogout);
+app.get('/displayList', loadJson);
+app.post('/getSelectedList', getSelectedList);
+app.post('/addItems', addItems);
+app.post('/deleteList', deleteList);
 
 module.exports = {
   app,

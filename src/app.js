@@ -3,12 +3,14 @@ const app = express();
 const fs = require("fs");
 const { User, List } = require("./user");
 const { readBody, readCookies, logRequest } = require("./serverUtil");
+
 let currentUserFile;
 
 const dashboardTemplate = fs.readFileSync(
   "./public/html/dashboard.html",
   "utf8"
 );
+const loginPageTemplate = fs.readFileSync("./public/html/index.html", "utf8");
 
 const writeToUserFile = function(res, userId) {
   fs.writeFile(
@@ -100,6 +102,8 @@ const handleUserLogin = function(req, res) {
 
 const renderLogout = function(req, res) {
   let userId = req.cookies.username;
+  console.log(currentUserFile);
+
   fs.writeFile(
     `./private_data/${userId}.json`,
     JSON.stringify(currentUserFile),
@@ -113,14 +117,14 @@ const renderLogout = function(req, res) {
   );
 };
 
-const createUser = function(req, res) {
+const createUser = function() {
   let { userId, password, todoLists } = currentUserFile;
   let user = new User(userId, password, todoLists);
   return user;
 };
 
 const getSelectedList = function(req, res) {
-  let user = createUser(req, res);
+  let user = createUser();
   let list = req.body;
   let selectedList = user.getList(list);
   res.send(JSON.stringify(selectedList));
@@ -136,14 +140,14 @@ const addList = function(req, res) {
 };
 
 const loadJson = function(req, res) {
-  let user = createUser(req, res);
+  let user = createUser();
   let listTitles = user.getListTitles();
   res.write(JSON.stringify(listTitles));
   res.end();
 };
 
 const addItems = function(req, res) {
-  let user = createUser(req, res);
+  let user = createUser();
   let { itemAttributes, selectedList } = JSON.parse(req.body);
   let { title, description } = user.getList(selectedList);
   let latestList = new List(title, description);
@@ -155,7 +159,7 @@ const addItems = function(req, res) {
 };
 
 const deleteList = function(req, res) {
-  let user = createUser(req, res);
+  let user = createUser();
   let selectedTitle = req.body;
   let selectedList = user.getList(selectedTitle);
   user.removeList(selectedList);

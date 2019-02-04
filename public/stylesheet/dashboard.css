@@ -1,150 +1,289 @@
+html,
 body {
-  font-family: Cambria, Cochin, Georgia, Times, "Times New Roman", serif;
-}
-main {
-  display: flex;
-}
-.headerDiv {
-  font-size: 50px;
+  height: 100%;
   width: 100%;
-  height: 70px;
+  margin: 0;
 }
-.logoutBtn {
+
+main {
+  font-family: 'Open Sans', sans-serif;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+}
+
+header {
+  height: 10%;
+  width: 100%;
+
+  line-height: 3;
+  border-bottom: 1px solid black;
   font-size: 25px;
-  float: right;
-  margin-top: -35px;
-  margin-right: 10px;
-}
-.leftDiv {
-  width: 40%;
-  height: 600px;
-  padding-top: 20px;
-}
-
-.addTodoHeader {
-  font-size: 35px;
-  margin-left: 15px;
-  margin-top: 10px;
-  margin-bottom: 20px;
-}
-
-.titleDiv1 {
-  font-size: 30px;
-  margin-left: 10px;
-  padding-bottom: 10px;
-}
-.descriptionArea {
-  font-size: 30px;
-  margin-left: 10px;
-  padding: 10px;
-}
-
-.addTodoBtn {
-  font-size: 25px;
-  margin-top: 10px;
-  margin-left: 220px;
-  border-radius: 5px;
-}
-
-.selectTodo {
-  justify-content: center;
   display: flex;
-  padding: 40px;
+  justify-content: space-between;
 }
 
-.selectLabel {
+.button {
+  font-family: inherit;
+  font-weight: inherit;
   font-size: 25px;
-  margin-top: -10px;
-  padding: 10px;
+  border-radius: 15px;
+  background-color: #0088cc;
+  color: white;
+  margin-right: 10px;
+  margin-left: 10px;
+  width: 100px;
 }
 
-.modifyTodo {
-  padding-top: 30px;
+.button:focus {
+  outline: none;
 }
 
-.editTodoBtn {
-  font-size: 25px;
+.headerDiv {
+  margin-left: 10px;
+  display: flex;
+}
+
+.leftSection {
+  width: 40%;
+  height: 100%;
+  display: flex;
   margin-top: 10px;
-  margin-left: 20px;
+  flex-direction: column;
 }
 
-.deleteTodoBtn {
-  font-size: 25px;
-  margin-top: 30px;
-  margin-left: 20px;
-}
-
-.rightDiv {
-  margin-top: 20px;
-  /* border: 2px solid black; */
+.rightSection {
   width: 60%;
-  margin-left: 20px;
-  height: 625px;
-  padding-top: 50px;
-  pointer-events: none;
+  height: 100%;
+  margin-top: 10px;
+  border: 1px solid skyblue;
+  border-radius: 20px;
+  box-shadow: 0px 2px 31px -5px rgba(161, 198, 227, 0.78);
 }
 
-.addItemsBtn {
-  font-size: 25px;
-  margin-top: 420px;
-  /* margin-left: 650px; */
-  border-radius: 5px;
+.mainSection {
+  /* height: 90%; */
+  /* width: 100%; */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 0;
 }
 
-.addItemBtn {
-  font-size: 25px;
-  margin-top: 30px;
-  /* margin-left: 20px; */
-  border-radius: 5px;
+.todos {
+  height: 350px;
+  width: 550px;
+  border: 1px solid skyblue;
+  margin: 0px 5px 5px 10px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  box-shadow: 0px 2px 31px -5px rgba(161, 198, 227, 0.78);
 }
 
-.inputItemsDiv {
-  padding-top: 50px;
-  height: 325px;
-  overflow: scroll;
+.add-todo {
+  height: 350px;
+  width: 550px;
+  border: 1px solid skyblue;
+  margin: 5px 5px 0px 10px;
+  border-radius: 20px;
+  box-shadow: 0px 2px 31px -5px rgba(161, 198, 227, 0.78);
 }
 
-.listTitle {
-  height: 20px;
-  width: 200px;
-  font-size: 18px;
-  /* font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif; */
-  margin-left: 70px;
+.todo-info {
+  height: 40%;
+  width: 40%;
+  margin: 10px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
 }
 
-.listDescription {
-  font-size: 18px;
-  margin-left: 160px;
-  /* font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif; */
+.edit-todo {
+  height: 400px;
+  width: 850px;
+  display: flex;
 }
 
-.selectBox {
-  height: 30px;
-  width: 200px;
-  font-size: 18px;
-  /* font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif; */
+.add-item {
+  height: 365px;
+  width: 700px;
+  margin: 10px;
+  border-radius: 20px;
 }
 
-.titleDiv {
-  margin-top: -50px;
-  font-size: 80px;
-  text-align: center;
-  padding-bottom: 10px;
+.save-button-div {
+  height: 365px;
+  width: 150px;
+  margin: 10px;
+  border-radius: 20px;
 }
-.descriptionDiv {
-  font-size: 50px;
-  text-align: center;
-}
-.listInputs {
-  display: inline;
-}
-.itemsDiv {
+
+.sub-header {
+  height: 20%;
+  width: 100%;
+
+  line-height: 2.5;
+  border-bottom: 1px solid skyblue;
   font-size: 30px;
-  margin-left: 110px;
+  display: flex;
+  justify-content: center;
+}
+
+.select-box {
+  margin-top: 50px;
+  height: 40px;
+  width: 400px;
+  border: 1px solid skyblue;
+  font-size: 25px;
+  font-family: inherit;
+}
+
+.select-box:focus {
+  outline: none;
+}
+
+.todo-btns {
+  margin-top: 120px;
+}
+
+.textbox {
+  font-family: inherit;
+  font-weight: inherit;
+  text-align: center;
+  font-size: 25px;
+  width: 90%;
+  margin: 25px 0;
+  border: none;
+  border-bottom: 1px solid skyblue;
+}
+
+.textbox:focus {
+  outline: none;
+}
+
+.add-div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.add-button {
+  font-family: inherit;
+  font-weight: inherit;
+  width: 70%;
+  height: 45px;
+  font-size: 25px;
+  border-radius: 20px;
+  margin-top: 40px;
+  background-color: #0088cc;
+  color: white;
+}
+
+.add-button:focus {
+  outline: none;
+}
+
+.todo-title {
+  height: 50px;
+  width: 600px;
+  font-size: 60px;
+  text-align: center;
+}
+
+.todo-description {
+  height: 35px;
+  width: 600px;
+  font-size: 35px;
+  text-align: center;
+}
+
+.item-textbox {
+  font-family: inherit;
+  font-weight: inherit;
+  text-align: center;
+  font-size: 25px;
+  width: 70%;
+  margin: 25px 0;
+  border: none;
+  border-bottom: 1px solid skyblue;
+}
+
+.item-textbox:focus {
+  outline: none;
+}
+
+.new-item {
+  display: flex;
+  justify-content: space-between;
+}
+
+.add-item-btn {
+  font-family: inherit;
+  font-weight: inherit;
+  width: 200px;
+  height: 45px;
+  font-size: 25px;
+  margin-top: 15px;
+  margin-left: 20px;
+  border-radius: 20px;
+  background-color: #0088cc;
+  color: white;
+}
+
+.add-item-btn:focus {
+  outline: none;
+}
+
+.checkBox {
+  zoom: 3.5;
+  margin-left: 50px;
 }
 
 .listsData {
-  height: 20px;
-  width: 200px;
-  font-size: 20px;
+  font-family: inherit;
+  font-size: 25px;
+}
+
+.item-label:hover {
+  cursor: pointer;
+}
+
+.delete-btn {
+  font-family: inherit;
+  font-weight: inherit;
+  width: 100px;
+  height: 45px;
+  font-size: 25px;
+  margin-top: 15px;
+  margin-left: 20px;
+  border-radius: 20px;
+  background-color: #0088cc;
+  color: white;
+}
+
+.delete-btn:focus {
+  outline: none;
+}
+
+.save-btn {
+  font-family: inherit;
+  font-weight: inherit;
+  width: 100px;
+  height: 45px;
+  font-size: 25px;
+  margin-top: 320px;
+  margin-left: 23px;
+  border-radius: 20px;
+  background-color: #0088cc;
+  color: white;
+}
+
+.save-btn:focus {
+  outline: none;
 }

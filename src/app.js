@@ -9,6 +9,7 @@ const dashboardTemplate = fs.readFileSync(
   './public/html/dashboard.html',
   'utf8'
 );
+const loginPageTemplate = fs.readFileSync('./public/html/index.html', 'utf8');
 
 const writeToUserFile = function(res, userId) {
   fs.writeFile(
@@ -20,8 +21,6 @@ const writeToUserFile = function(res, userId) {
   );
 };
 
-const loginPageTemplate = fs.readFileSync('./public/html/index.html', 'utf8');
-
 const parseUserInfo = function(details) {
   let userId = details.split(/&|=/)[1];
   let password = details.split(/&|=/)[3];
@@ -29,10 +28,7 @@ const parseUserInfo = function(details) {
 };
 
 const redirectToLogin = function(res) {
-  res.writeHead(302, {
-    Location: '/html/index.html'
-  });
-  res.end();
+  res.redirect('/index.html');
 };
 
 const handleSignup = function(req, res) {
@@ -113,6 +109,8 @@ const invalidUserError = function(res) {
 
 const renderLogout = function(req, res) {
   let userId = req.cookies.username;
+  console.log(currentUserFile);
+
   fs.writeFile(
     `./private_data/${userId}.json`,
     JSON.stringify(currentUserFile),
